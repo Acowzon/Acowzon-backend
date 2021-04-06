@@ -12,6 +12,7 @@ public class GlobalExceptionHandler {
 
     /**
      * 业务相关异常处理器
+     * @param req Servlet请求
      * @param businessException 业务相关异常
      * @return 将异常封装后的响应
      */
@@ -21,6 +22,12 @@ public class GlobalExceptionHandler {
         return DefaultWebResponse.Builder.fail(businessException.getMessage());
     }
 
+    /**
+     * 运行时异常处理器
+     * @param req Servlet请求
+     * @param runtimeException 运行时异常
+     * @return 将异常封装后的响应
+     */
     @ExceptionHandler(value = RuntimeException.class)
     @ResponseBody
     public DefaultWebResponse runTimeExceptionHandler(HttpServletRequest req,RuntimeException runtimeException) {
