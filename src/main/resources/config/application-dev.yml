@@ -1,14 +1,12 @@
 server:
   port: 8080
 spring:
-  resources:
-    static-locations: classpath:templates/
   #数据库连接配置
   datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://server.moeworkshop.com:3306/Aoxzon?useAffectedRows=TRUE&characterEncoding=utf-8&useSSL=false
     username: AoxzonDev
     password: 1qaz2wsx
+    driver-class-name: com.mysql.cj.jdbc.Driver
 
 #mybatis的相关配置
 mybatis:

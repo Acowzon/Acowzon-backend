@@ -13,7 +13,7 @@
     <groupId>org.acowzon</groupId>
     <artifactId>Acowzon-backend</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <packaging>pom</packaging>
+    <packaging>jar</packaging>
     <name>Acowzon-backend</name>
     <description>亚牛逊后端</description>
 
