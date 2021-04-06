@@ -6,7 +6,7 @@ import org.acowzon.backend.entity.order.Order;
 
 public interface OrderService {
 
-    public int createOrder(Order order);
+    int createOrder(Order order);
 
     int deleteOrder(String orderID);
 
