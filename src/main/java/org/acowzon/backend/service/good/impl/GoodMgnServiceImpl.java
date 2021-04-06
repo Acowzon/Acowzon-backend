@@ -19,7 +19,7 @@ public class GoodMgnServiceImpl implements GoodMgnService {
         Goods goods = goodsMapper.queryGoodsById(id);
         GoodDTO goodDTO = new GoodDTO();
         if (goods == null) {
-            throw new BusinessException();
+            throw new BusinessException("no_such_good");
         } else {
             BeanUtils.copyProperties(goods, goodDTO);
             return goodDTO;

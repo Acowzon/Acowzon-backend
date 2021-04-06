@@ -45,5 +45,5 @@ public class GoodMgnCtrl {
             return DefaultWebResponse.Builder.success("add good success");
         }
     }
-
+    
 }

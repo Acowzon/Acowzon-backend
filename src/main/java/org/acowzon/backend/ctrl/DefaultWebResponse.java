@@ -45,6 +45,7 @@ public class DefaultWebResponse {
 
         public static DefaultWebResponse fail(String message) {
             DefaultWebResponse response = new DefaultWebResponse();
+            response.setData(null);
             response.setStatus("error");
             response.setMsg(message);
             return response;
