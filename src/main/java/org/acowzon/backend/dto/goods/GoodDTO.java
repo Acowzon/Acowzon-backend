@@ -1,4 +1,4 @@
-package org.acowzon.backend.dto.good;
+package org.acowzon.backend.dto.goods;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

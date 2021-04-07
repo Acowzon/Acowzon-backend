@@ -1,6 +1,6 @@
-package org.acowzon.backend.mapper.good;
+package org.acowzon.backend.mapper.goods;
 
-import org.acowzon.backend.entity.good.GoodsType;
+import org.acowzon.backend.entity.goods.GoodsType;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 

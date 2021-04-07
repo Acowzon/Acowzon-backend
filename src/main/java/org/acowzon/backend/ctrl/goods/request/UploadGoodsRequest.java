@@ -1,6 +1,6 @@
-package org.acowzon.backend.ctrl.good.request;
+package org.acowzon.backend.ctrl.goods.request;
 
-public class UploadGoodRequest {
+public class UploadGoodsRequest {
 
     private String goodsId; // 商品id
     private String goodsName; // 商品名称

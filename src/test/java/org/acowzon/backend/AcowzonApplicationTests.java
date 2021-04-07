@@ -2,7 +2,7 @@ package org.acowzon.backend;
 
 import org.acowzon.backend.entity.order.Order;
 import org.acowzon.backend.exception.BusinessException;
-import org.acowzon.backend.service.good.impl.GoodMgnServiceImpl;
+import org.acowzon.backend.service.goods.impl.GoodsMgnServiceImpl;
 import org.acowzon.backend.service.order.OrderService;
 import org.acowzon.backend.service.user.UserService;
 import org.junit.jupiter.api.Test;
@@ -20,7 +20,7 @@ class AcowzonApplicationTests {
     UserService userService;
 
     @Autowired
-    GoodMgnServiceImpl goodMgnService;
+    GoodsMgnServiceImpl goodsMgnService;
 
     @Test
     void contextLoads() throws ParseException, BusinessException {

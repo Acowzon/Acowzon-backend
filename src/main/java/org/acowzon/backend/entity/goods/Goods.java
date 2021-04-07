@@ -1,4 +1,4 @@
-package org.acowzon.backend.entity.good;
+package org.acowzon.backend.entity.goods;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

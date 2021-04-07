@@ -1,21 +1,21 @@
-package org.acowzon.backend.service.good.impl;
+package org.acowzon.backend.service.goods.impl;
 
-import org.acowzon.backend.dto.good.GoodDTO;
-import org.acowzon.backend.entity.good.Goods;
+import org.acowzon.backend.dto.goods.GoodDTO;
+import org.acowzon.backend.entity.goods.Goods;
 import org.acowzon.backend.exception.BusinessException;
-import org.acowzon.backend.mapper.good.GoodsMapper;
-import org.acowzon.backend.service.good.GoodMgnService;
+import org.acowzon.backend.mapper.goods.GoodsMapper;
+import org.acowzon.backend.service.goods.GoodsMgnService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class GoodMgnServiceImpl implements GoodMgnService {
+public class GoodsMgnServiceImpl implements GoodsMgnService {
     @Autowired
     GoodsMapper goodsMapper;
 
     @Override
-    public GoodDTO getGoodById(String id) throws BusinessException {
+    public GoodDTO getGoodsById(String id) throws BusinessException {
         Goods goods = goodsMapper.queryGoodsById(id);
         GoodDTO goodDTO = new GoodDTO();
         if (goods == null) {
@@ -36,7 +36,7 @@ public class GoodMgnServiceImpl implements GoodMgnService {
     }
 
     @Override
-    public int addGood(Goods goods) {
+    public int addGoods(Goods goods) {
         return this.goodsMapper.addGoods(goods);
     }
 }

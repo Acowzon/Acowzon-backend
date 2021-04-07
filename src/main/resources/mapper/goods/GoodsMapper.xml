@@ -3,7 +3,7 @@
         PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="org.acowzon.backend.mapper.good.GoodsMapper">
+<mapper namespace="org.acowzon.backend.mapper.goods.GoodsMapper">
     <!--排序的sql片段:默认排序方式-->
     <sql id="OrderByDefault">
         order by views desc, goods_stars_count desc, sold_count desc, goods_price
