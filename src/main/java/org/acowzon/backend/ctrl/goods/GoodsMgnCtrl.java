@@ -6,6 +6,8 @@ import org.acowzon.backend.ctrl.goods.request.UploadGoodsRequest;
 import org.acowzon.backend.entity.goods.Goods;
 import org.acowzon.backend.exception.BusinessException;
 import org.acowzon.backend.service.goods.impl.GoodsMgnServiceImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
@@ -15,12 +17,17 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin
 @RequestMapping("goods")
 public class GoodsMgnCtrl {
+
+    Logger logger = LoggerFactory.getLogger(GoodsMgnCtrl.class);
+
     @Autowired
     GoodsMgnServiceImpl goodsMgnService;
+
 
     @PostMapping("detail")
     public DefaultWebResponse getGoodDetail(@RequestBody GetGoodsDetailRequest request) throws BusinessException {
         Assert.notNull(request, "request can not be null");
+        logger.info(request.toString());
         return DefaultWebResponse.Builder.success(goodsMgnService.getGoodsById(request.getGoodsId()));
     }
 
