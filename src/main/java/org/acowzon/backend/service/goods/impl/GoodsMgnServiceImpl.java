@@ -1,6 +1,6 @@
 package org.acowzon.backend.service.goods.impl;
 
-import org.acowzon.backend.dto.goods.GoodDTO;
+import org.acowzon.backend.dto.goods.GoodsDTO;
 import org.acowzon.backend.entity.goods.Goods;
 import org.acowzon.backend.exception.BusinessException;
 import org.acowzon.backend.mapper.goods.GoodsMapper;
@@ -15,24 +15,24 @@ public class GoodsMgnServiceImpl implements GoodsMgnService {
     GoodsMapper goodsMapper;
 
     @Override
-    public GoodDTO getGoodsById(String id) throws BusinessException {
+    public GoodsDTO getGoodsById(String id) throws BusinessException {
         Goods goods = goodsMapper.queryGoodsById(id);
-        GoodDTO goodDTO = new GoodDTO();
+        GoodsDTO goodsDTO = new GoodsDTO();
         if (goods == null) {
             throw new BusinessException("no_such_good");
         } else {
-            BeanUtils.copyProperties(goods, goodDTO);
-            return goodDTO;
+            BeanUtils.copyProperties(goods, goodsDTO);
+            return goodsDTO;
         }
     }
 
     @Override
-    public GoodDTO[] getAllGoods() {
+    public GoodsDTO[] getAllGoods() {
         return goodsMapper.queryAllGoods().stream().map(goods -> {
-            GoodDTO goodDTO = new GoodDTO();
-            BeanUtils.copyProperties(goods, goodDTO);
-            return goodDTO;
-        }).toArray(GoodDTO[]::new);
+            GoodsDTO goodsDTO = new GoodsDTO();
+            BeanUtils.copyProperties(goods, goodsDTO);
+            return goodsDTO;
+        }).toArray(GoodsDTO[]::new);
     }
 
     @Override
