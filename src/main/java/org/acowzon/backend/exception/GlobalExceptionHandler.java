@@ -1,6 +1,8 @@
 package org.acowzon.backend.exception;
 
 import org.acowzon.backend.ctrl.DefaultWebResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -10,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
+    Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
     /**
      * 业务相关异常处理器
      * @param req Servlet请求
@@ -19,6 +22,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value = BusinessException.class)
     @ResponseBody
     public DefaultWebResponse businessExceptionHandler(HttpServletRequest req, BusinessException businessException) {
+        logger.error("business exception",businessException);
         return DefaultWebResponse.Builder.fail(businessException.getMessage());
     }
 

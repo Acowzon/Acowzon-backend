@@ -67,7 +67,7 @@ public class GoodsMgnCtrl {
      * @apiSuccess {String} data.goodsName 商品名称
      * @apiSuccess {UUID} data.goodsTypeId 商品类型id
      * @apiSuccess {Double} data.goodsPrice 商品单价
-     * @apiSuccess {String} data.goodsImage 商品图片地址
+     * @apiSuccess {String} data.imageUrl 商品图片地址
      * @apiSuccess {UUID} data.goodsId 商品id
      * @apiSuccess {String} data.goodsSimpleDes 商品简单描述
      * @apiSuccess {String} data.goodsDescription 商品完整描述
@@ -86,7 +86,7 @@ public class GoodsMgnCtrl {
      * "goodsName": "男士牛仔裤",
      * "goodsTypeId": "4a1c24ad-6d3f-4953-ad9f-f2dde87fd9cc",
      * "goodsPrice": 211.32,
-     * "goodsImage": "https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fgw3.alicdn.com%2Fbao%2Fuploaded%2Fi4%2FTB1hMgaFVXXXXbcXFXXXXXXXXXX_%21%210-item_pic.jpg_600x600.jpg&refer=http%3A%2F%2Fgw3.alicdn.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=jpeg?sec=1620457937&t=35f5c721454338f02e64b6b030ade8dc",
+     * "imageUrl": "https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fgw3.alicdn.com%2Fbao%2Fuploaded%2Fi4%2FTB1hMgaFVXXXXbcXFXXXXXXXXXX_%21%210-item_pic.jpg_600x600.jpg&refer=http%3A%2F%2Fgw3.alicdn.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=jpeg?sec=1620457937&t=35f5c721454338f02e64b6b030ade8dc",
      * "goodsSimpleDes": "牛仔裤",
      * "goodsDescription": "这是一条用来展示的牛仔裤",
      * "goodsInventory": 12,
@@ -122,29 +122,28 @@ public class GoodsMgnCtrl {
     @PostMapping("query")
     public DefaultWebResponse queryGoods(@RequestBody Map<String, Object> map) {
         Assert.notNull(map, "request can not be null");
-        logger.info(map.toString());
         //todo:分页查询，多条件查询
         return DefaultWebResponse.Builder.success(goodsMgnService.queryGoods(map));
     }
 
     @PostMapping("add")
-    public DefaultWebResponse uploadGoods(@RequestBody AddGoodsRequest request) throws BusinessException {
+    public DefaultWebResponse addGoods(@RequestBody AddGoodsRequest request) throws BusinessException {
         Assert.notNull(request, "request can not be null");
         logger.info(request.toString());
         GoodsDTO goods = new GoodsDTO();
         BeanUtils.copyProperties(request, goods);
 
         GoodsTypeEntity goodsTypeEntity = new GoodsTypeEntity();
-        goodsTypeEntity.setGoodsTypeId(request.getGoodsTypeId());
-        goods.setGoodsType(goodsTypeEntity);
+        goodsTypeEntity.setId(request.getTypeId());
+        goods.setType(goodsTypeEntity);
 
         return DefaultWebResponse.Builder.success("add_goods_success", goodsMgnService.addGoods(goods));
     }
 
     @PostMapping("update")
-    public DefaultWebResponse updateGoods(@RequestBody UpdateGoodRequest request) throws BusinessException {
+    public DefaultWebResponse updateGoods(@RequestBody UpdateGoodsRequest request) throws BusinessException {
         Assert.notNull(request, "update goods request can not be null");
-        logger.info("update goods request:", request.toString());
+        logger.info(request.toString());
         GoodsDTO goods = new GoodsDTO();
         BeanUtils.copyProperties(request, goods);
         goodsMgnService.updateGoods(goods);
@@ -154,39 +153,39 @@ public class GoodsMgnCtrl {
     @PostMapping("delete")
     public DefaultWebResponse deleteGoods(@RequestBody UUIDParamRequest request) throws BusinessException {
         Assert.notNull(request, "delete goods request can not be null");
-        logger.info("delete goods request:", request.toString());
+        logger.info(request.toString());
         goodsMgnService.deleteGoods(request.getId());
         return DefaultWebResponse.Builder.success("delete_goods_success");
     }
 
     @PostMapping("soldCount/update")
-    public DefaultWebResponse updateGoodsSoldCount(@RequestBody UpdateGoodsSoldCountRequest request) throws BusinessException {
+    public DefaultWebResponse updateGoodsSoldCount(@RequestBody UpdateSoldCountRequest request) throws BusinessException {
         Assert.notNull(request, "update goods sold count request can not be null");
-        logger.info("update goods sold count request:", request.toString());
-        goodsMgnService.updateSoldCount(request.getGoodsId(), request.getSoldCount(), request.isAbsolute());
+        logger.info(request.toString());
+        goodsMgnService.updateSoldCount(request.getId(), request.getSoldCount(), request.isAbsolute());
         return DefaultWebResponse.Builder.success("update_sold_count_success");
     }
 
     @PostMapping("inventory/update")
-    public DefaultWebResponse updateGoodsInventoryCount(@RequestBody UpdateGoodsInventoryRequest request) throws BusinessException {
+    public DefaultWebResponse updateGoodsInventoryCount(@RequestBody UpdateInventoryRequest request) throws BusinessException {
         Assert.notNull(request, "update goods inventory request can not be null");
-        logger.info("update goods inventory request:", request.toString());
-        goodsMgnService.updateInventory(request.getGoodsId(), request.getInventory(), request.isAbsolute());
+        logger.info(request.toString());
+        goodsMgnService.updateInventory(request.getId(), request.getInventory(), request.isAbsolute());
         return DefaultWebResponse.Builder.success("update_inventory_success");
     }
 
     @PostMapping("type/add")
     public DefaultWebResponse addGoodType(@RequestBody AddGoodsTypeRequest request) {
         Assert.notNull(request, "request can not be null");
-        logger.info("add good type request", request.toString());
+        logger.info(request.toString());
 
-        return DefaultWebResponse.Builder.success("add_goods_type_success", goodsMgnService.addGoodsType(request.getGoodsType()));
+        return DefaultWebResponse.Builder.success("add_goods_type_success", goodsMgnService.addGoodsType(request.getName()));
     }
 
     @PostMapping("type/update")
-    public DefaultWebResponse updateGoodType(@RequestBody UpdateGoodsTypeRequest request) throws BusinessException {
+    public DefaultWebResponse updateGoodType(@RequestBody UpdateTypeRequest request) throws BusinessException {
         Assert.notNull(request, "request can not be null");
-        logger.info("update good type request", request.toString());
+        logger.info(request.toString());
         GoodsTypeEntity goodsType = new GoodsTypeEntity();
         BeanUtils.copyProperties(request, goodsType);
         this.goodsMgnService.updateGoodsType(goodsType);
@@ -196,7 +195,7 @@ public class GoodsMgnCtrl {
     @PostMapping("type/delete")
     public DefaultWebResponse deleteGoodType(@RequestBody UUIDParamRequest request) throws BusinessException {
         Assert.notNull(request, "request can not be null");
-        logger.info("delete good type request", request.toString());
+        logger.info(request.toString());
         this.goodsMgnService.deleteGoodsType(request.getId());
         return DefaultWebResponse.Builder.success("delete_goods_type_success");
     }

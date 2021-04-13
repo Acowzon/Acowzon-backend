@@ -12,14 +12,14 @@ import java.util.UUID;
 @NoArgsConstructor
 public class GoodsDTO {
 
-    private UUID goodsId;
-    private String goodsName;
-    private GoodsTypeEntity goodsType;
-    private double goodsPrice;
-    private String goodsImage;
-    private String goodsSimpleDes;
-    private String goodsDescription;
-    private int goodsInventory;
+    private UUID id;
+    private String name;
+    private GoodsTypeEntity type;
+    private double price;
+    private String imageUrl;
+    private String simpleDes;
+    private String description;
+    private int inventory;
     private int soldCount;
 
     private UUID retailerId;

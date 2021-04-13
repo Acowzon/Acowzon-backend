@@ -23,9 +23,9 @@ public class GoodsTypeEntity implements Serializable {
     @GeneratedValue(generator = "idGenerator")
     @Type(type="uuid-char")
     @NotNull
-    private UUID goodsTypeId; // 类别id
+    private UUID id; // 类别id
 
     @NotEmpty
     @Column(unique = true)
-    private String goodsType;   // 类别
+    private String name;   // 类别
 }

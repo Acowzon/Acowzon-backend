@@ -8,9 +8,13 @@ import java.util.UUID;
 
 @Data
 @NoArgsConstructor
-public class UpdateGoodsTypeRequest {
-    private UUID goodsTypeId; // 类别id
+public class UpdateInventoryRequest {
 
     @NotNull
-    private String goodsType;   // 类别
+    UUID id;
+
+    @NotNull
+    int inventory;
+
+    boolean isAbsolute = true;
 }

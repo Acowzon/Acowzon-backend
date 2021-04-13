@@ -24,34 +24,34 @@ public class GoodsEntity implements Serializable {
     @GenericGenerator(name = "idGenerator", strategy = "uuid2")
     @GeneratedValue(generator = "idGenerator")
     @Type(type="uuid-char")
-    private UUID goodsId; // 商品id
+    private UUID id; // 商品id
 
     @NotEmpty
-    private String goodsName; // 商品名称
+    private String name; // 商品名称
 
     @NotNull
     @Type(type="uuid-char")
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinTable(name = "goods_type_goods_type_relation")
-    private GoodsTypeEntity goodsType; // 商品类型
+    private GoodsTypeEntity type; // 商品类型
 
     @NotNull
-    private double goodsPrice; // 商品价格
+    private double price; // 商品价格
 
     @NotEmpty
     @Lob
     @Column(columnDefinition="TEXT")
-    private String goodsImage; // 商品图片的存储地址
+    private String imageUrl; // 商品图片的存储地址
 
     @NotEmpty
-    private String goodsSimpleDes; // 商品的简单描述
+    private String simpleDes; // 商品的简单描述
 
     @NotEmpty
-    private String goodsDescription; // 商品的描述
+    private String description; // 商品的描述
 
     @NotNull
     @Min(0)
-    private int goodsInventory = 0; // 商品库存
+    private int inventory = 0; // 商品库存
 
     @NotNull
     @Min(0)
@@ -69,7 +69,7 @@ public class GoodsEntity implements Serializable {
 
     @Column()
     @Min(0)
-    private int goodsStarsCount=0; // 喜欢此商品的人数
+    private int starsCount =0; // 喜欢此商品的人数
 
     @Column()
     @Min(0)

@@ -8,13 +8,12 @@ import java.util.UUID;
 
 @Data
 @NoArgsConstructor
-public class UpdateGoodsInventoryRequest {
+public class UpdateSoldCountRequest {
+    @NotNull
+    UUID id;
 
     @NotNull
-    UUID goodsId;
-
-    @NotNull
-    int inventory;
+    int soldCount;
 
     boolean isAbsolute = true;
 }
