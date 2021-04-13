@@ -1,41 +1,46 @@
 package org.acowzon.backend.service.goods.impl;
 
+import org.acowzon.backend.dao.goods.GoodsDAO;
+import org.acowzon.backend.dao.goods.GoodsTypeDAO;
 import org.acowzon.backend.dto.goods.GoodsDTO;
-import org.acowzon.backend.entity.goods.Goods;
-import org.acowzon.backend.entity.user.User;
+import org.acowzon.backend.entity.goods.GoodsEntity;
+import org.acowzon.backend.entity.goods.GoodsTypeEntity;
 import org.acowzon.backend.exception.BusinessException;
-import org.acowzon.backend.mapper.goods.GoodsMapper;
-import org.acowzon.backend.mapper.user.UserMapper;
 import org.acowzon.backend.service.goods.GoodsMgnService;
+import org.acowzon.backend.utils.PublicBeanUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
+import java.util.Date;
 import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class GoodsMgnServiceImpl implements GoodsMgnService {
     @Autowired
-    GoodsMapper goodsMapper;
+    GoodsDAO goodsDAO;
 
     @Autowired
-    UserMapper userMapper;
+    GoodsTypeDAO goodsTypeDAO;
 
     @Override
-    public GoodsDTO getGoodsById(String id) throws BusinessException {
-        Goods goods = goodsMapper.queryGoodsById(id);
-        GoodsDTO goodsDTO = new GoodsDTO();
-        if (goods == null) {
-            throw new BusinessException("no_such_goods");
-        } else {
-            BeanUtils.copyProperties(goods, goodsDTO);
+    public GoodsDTO getGoodsById(UUID goodsId) throws BusinessException {
+        Assert.notNull(goodsId, "goodsId can not be null");
+        Optional<GoodsEntity> goods = goodsDAO.findById(goodsId);
+        if (goods.isPresent()) {
+            GoodsDTO goodsDTO = new GoodsDTO();
+            BeanUtils.copyProperties(goods.get(), goodsDTO);
             return goodsDTO;
         }
+        throw new BusinessException("no_such_goods");
     }
 
     @Override
     public GoodsDTO[] getAllGoods() {
-        return goodsMapper.queryAllGoods().stream().map(goods -> {
+        return goodsDAO.findAll().stream().map(goods -> {
             GoodsDTO goodsDTO = new GoodsDTO();
             BeanUtils.copyProperties(goods, goodsDTO);
             return goodsDTO;
@@ -43,12 +48,9 @@ public class GoodsMgnServiceImpl implements GoodsMgnService {
     }
 
     @Override
-    public GoodsDTO[] getGoodsByRetailerId(String retailerId) throws BusinessException {
-        User user = userMapper.queryUserById(retailerId);
-        if(user == null || user.getUserType() == 0) {
-            throw new BusinessException("no_such_retailer");
-        }
-        return goodsMapper.queryGoodsByRetailerId(retailerId).stream().map(goods -> {
+    public GoodsDTO[] getGoodsByRetailerId(UUID retailerId) throws BusinessException {
+        Assert.notNull(retailerId, "retailerId can not be null");
+        return goodsDAO.findAllByRetailerId(retailerId).stream().map(goods -> {
             GoodsDTO goodsDTO = new GoodsDTO();
             BeanUtils.copyProperties(goods, goodsDTO);
             return goodsDTO;
@@ -57,35 +59,123 @@ public class GoodsMgnServiceImpl implements GoodsMgnService {
 
     @Override
     public GoodsDTO[] queryGoods(Map map) {
-        return goodsMapper.queryGoodsByMap(map).stream().map(goods -> {
-            GoodsDTO goodsDTO = new GoodsDTO();
-            BeanUtils.copyProperties(goods, goodsDTO);
-            return goodsDTO;
-        }).toArray(GoodsDTO[]::new);
+        //todo:分页查询，多条件查询
+        return null;
     }
 
     @Override
-    public int addGoods(Goods goods) {
-        return this.goodsMapper.addGoods(goods);
-    }
+    public GoodsEntity addGoods(GoodsDTO goods) throws BusinessException {
+        Assert.notNull(goods, "GoodsDTO can not be null");
+        GoodsEntity goodsEntity = new GoodsEntity();
+        BeanUtils.copyProperties(goods, goodsEntity);
+        Optional<GoodsTypeEntity> goodsTypeEntity = goodsTypeDAO.findById(goods.getGoodsType().getGoodsTypeId());
+        if (goodsTypeEntity.isPresent()) {
+            goodsEntity.setGoodsType(goodsTypeEntity.get());
+            goodsEntity.setCreateTime(new Date());
+            goodsEntity.setUpdateTime(new Date());
+            return goodsDAO.save(goodsEntity);
 
-    @Override
-    public int updateGoods(Goods goods) throws BusinessException {
-        Goods oldGoods = goodsMapper.queryGoodsById(goods.getGoodsId());
-        if (oldGoods == null) {
-            throw new BusinessException("no_such_goods");
-        } else {
-            return goodsMapper.updateGoods(goods);
         }
+        throw new BusinessException("no_such_goods_type");
     }
 
     @Override
-    public int deleteGoods(String id) throws BusinessException {
-        Goods goods = goodsMapper.queryGoodsById(id);
-        if (goods == null) {
-            throw new BusinessException("no_such_goods");
-        } else {
-            return goodsMapper.delGoods(id);
+    public void updateGoods(GoodsDTO goodsDTO) throws BusinessException {
+        Assert.notNull(goodsDTO, "GoodsDTO can not be null");
+        Optional<GoodsEntity> goods = goodsDAO.findById(goodsDTO.getGoodsId());
+        if (goods.isPresent()) {
+            BeanUtils.copyProperties(goodsDTO, goods, PublicBeanUtils.getNullPropertyNames(goodsDTO));
+            goods.get().setUpdateTime(new Date());
+            goodsDAO.save(goods.get());
+
         }
+        throw new BusinessException("no_such_goods");
+    }
+
+    @Override
+    public void deleteGoods(UUID goodsId) throws BusinessException {
+        Assert.notNull(goodsId, "goodsId can not be null");
+        Optional<GoodsEntity> goods = goodsDAO.findById(goodsId);
+        if (goods.isPresent()) {
+            goodsDAO.deleteById(goodsId);
+        }
+        throw new BusinessException("no_such_goods");
+    }
+
+    @Override
+    public void updateInventory(UUID goodsId, int inventory, boolean isAbsolute) throws BusinessException {
+        Assert.notNull(goodsId, "goodsId can not be null");
+        Optional<GoodsEntity> goodsEntityOptional = goodsDAO.findById(goodsId);
+        if (!goodsEntityOptional.isPresent()) {
+            throw new BusinessException("no_such_goods");
+        }
+        GoodsEntity goods = goodsEntityOptional.get();
+        if (isAbsolute && inventory >= 0) {
+            goods.setGoodsInventory(inventory);
+        } else {
+            if (goods.getGoodsInventory() + inventory >= 0) {
+                goods.setGoodsInventory(goods.getGoodsInventory() + inventory);
+            } else {
+                throw new BusinessException("invalid_inventory_value");
+            }
+        }
+        goodsDAO.save(goods);
+    }
+
+    @Override
+    public void updateInventory(UUID goodsId, int inventory) throws BusinessException {
+        this.updateInventory(goodsId, inventory, true);
+    }
+
+    @Override
+    public void updateSoldCount(UUID goodsId, int soldCount, boolean isAbsolute) throws BusinessException {
+        Assert.notNull(goodsId, "goodsId can not be null");
+        Optional<GoodsEntity> goodsEntityOptional = goodsDAO.findById(goodsId);
+        if (!goodsEntityOptional.isPresent()) {
+            throw new BusinessException("no_such_goods");
+        }
+        GoodsEntity goods = goodsEntityOptional.get();
+        if (isAbsolute && soldCount >= 0) {
+            goods.setSoldCount(soldCount);
+        } else {
+            if (goods.getSoldCount() + soldCount >= 0) {
+                goods.setSoldCount(goods.getSoldCount() + soldCount);
+            } else {
+                throw new BusinessException("invalid_soldCount_value");
+            }
+        }
+        goodsDAO.save(goods);
+    }
+
+    @Override
+    public void updateSoldCount(UUID goodsId, int soldCount) throws BusinessException {
+        this.updateSoldCount(goodsId, soldCount, true);
+    }
+
+    @Override
+    public GoodsTypeEntity addGoodsType(String goodsType) {
+        Assert.notNull(goodsType, "goodsType can not be null");
+        GoodsTypeEntity goodsTypeEntity = new GoodsTypeEntity();
+        goodsTypeEntity.setGoodsType(goodsType);
+        return goodsTypeDAO.save(goodsTypeEntity);
+    }
+
+    @Override
+    public void updateGoodsType(GoodsTypeEntity goodsType) throws BusinessException {
+        Assert.notNull(goodsType, "goodsType can not be null");
+        if (!goodsTypeDAO.findById(goodsType.getGoodsTypeId()).isPresent()) {
+            throw new BusinessException("no_such_goods_type");
+        }
+        goodsTypeDAO.save(goodsType);
+    }
+
+    @Override
+    public void deleteGoodsType(UUID id) throws BusinessException {
+        Assert.notNull(id, "goodsTypeId can not be null");
+        Optional<GoodsTypeEntity> goodsType = goodsTypeDAO.findById(id);
+        if (goodsType.isPresent()) {
+            goodsTypeDAO.deleteById(id);
+        }
+        throw new BusinessException("no_such_goods_type");
     }
 }

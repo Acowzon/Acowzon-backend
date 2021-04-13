@@ -31,6 +31,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value = RuntimeException.class)
     @ResponseBody
     public DefaultWebResponse runTimeExceptionHandler(HttpServletRequest req,RuntimeException runtimeException) {
+        runtimeException.printStackTrace();
         return DefaultWebResponse.Builder.fail("系统内部错误，请联系管理员");
     }
 }

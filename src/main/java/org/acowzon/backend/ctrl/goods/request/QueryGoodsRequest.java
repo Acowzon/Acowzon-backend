@@ -1,12 +1,16 @@
 package org.acowzon.backend.ctrl.goods.request;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Map;
+
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-public class GetGoodsDetailRequest {
-    private String goodsId;
+public class QueryGoodsRequest {
+
+    /**
+     * 查询条件map
+     */
+    Map<String,Object> queryMap;
 }
