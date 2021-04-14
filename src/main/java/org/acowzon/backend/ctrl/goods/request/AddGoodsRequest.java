@@ -16,6 +16,6 @@ public class AddGoodsRequest {
     private String simpleDes; // 商品的简单描述
     private String description; // 商品的描述
     private int inventory; // 商品库存
-    private UUID retailerId; // 商品上架商家的id
+    private UUID shopId; // 商品上架商家的id
 
 }

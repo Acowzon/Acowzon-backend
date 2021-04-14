@@ -18,7 +18,7 @@ public interface GoodsMgnService {
 
     GoodsDetailDTO[] queryGoods(Map map);
 
-    GoodsEntity addGoods(GoodsDetailDTO goodsDetailDTO) throws BusinessException;
+    UUID addGoods(GoodsDetailDTO goodsDetailDTO) throws BusinessException;
 
     void updateGoods(GoodsDetailDTO goodsDetailDTO) throws BusinessException;
 
@@ -32,7 +32,7 @@ public interface GoodsMgnService {
 
     void updateSoldCount(UUID goodsId,int soldCount,boolean isAbsolute) throws BusinessException;
 
-    GoodsTypeEntity addGoodsType(String goodsType);
+    UUID addGoodsType(String goodsType);
 
     void updateGoodsType(GoodsTypeEntity goodsType) throws BusinessException;
 

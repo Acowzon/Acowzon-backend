@@ -16,7 +16,7 @@ public class GoodsDetailDTO {
 
     private String name;
 
-    private GoodsTypeEntity type;
+    private GoodsTypeDTO type;
 
     private double price;
 

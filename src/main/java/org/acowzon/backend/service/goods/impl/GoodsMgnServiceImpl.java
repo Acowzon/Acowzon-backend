@@ -2,7 +2,9 @@ package org.acowzon.backend.service.goods.impl;
 
 import org.acowzon.backend.dao.goods.GoodsDAO;
 import org.acowzon.backend.dao.goods.GoodsTypeDAO;
+import org.acowzon.backend.dao.shop.ShopDAO;
 import org.acowzon.backend.dto.goods.GoodsDetailDTO;
+import org.acowzon.backend.dto.goods.GoodsTypeDTO;
 import org.acowzon.backend.entity.goods.GoodsEntity;
 import org.acowzon.backend.entity.goods.GoodsTypeEntity;
 import org.acowzon.backend.entity.shop.ShopEntity;
@@ -26,6 +28,9 @@ public class GoodsMgnServiceImpl implements GoodsMgnService {
 
     @Autowired
     GoodsTypeDAO goodsTypeDAO;
+
+    @Autowired
+    ShopDAO shopDAO;
 
     @Override
     public GoodsDetailDTO getGoodsById(UUID goodsId) throws BusinessException {
@@ -55,6 +60,9 @@ public class GoodsMgnServiceImpl implements GoodsMgnService {
         return goodsDAO.findAllByShop(new ShopEntity(shopId)).stream().map(goods -> {
             GoodsDetailDTO goodsDetailDTO = new GoodsDetailDTO();
             BeanUtils.copyProperties(goods, goodsDetailDTO);
+            GoodsTypeDTO goodsTypeDTO = new GoodsTypeDTO();
+            BeanUtils.copyProperties(goods.getType(),goodsTypeDTO);
+            goodsDetailDTO.setType(goodsTypeDTO);
             return goodsDetailDTO;
         }).toArray(GoodsDetailDTO[]::new);
     }
@@ -66,19 +74,28 @@ public class GoodsMgnServiceImpl implements GoodsMgnService {
     }
 
     @Override
-    public GoodsEntity addGoods(GoodsDetailDTO goods) throws BusinessException {
+    public UUID addGoods(GoodsDetailDTO goods) throws BusinessException {
         Assert.notNull(goods, "GoodsDTO can not be null");
         GoodsEntity goodsEntity = new GoodsEntity();
         BeanUtils.copyProperties(goods, goodsEntity);
         Optional<GoodsTypeEntity> goodsTypeEntity = goodsTypeDAO.findById(goods.getType().getId());
+
         if (goodsTypeEntity.isPresent()) {
             goodsEntity.setType(goodsTypeEntity.get());
-            goodsEntity.setCreateTime(new Date());
-            goodsEntity.setUpdateTime(new Date());
-            return goodsDAO.save(goodsEntity);
         } else {
             throw new BusinessException("no_such_goods_type");
         }
+
+        Optional<ShopEntity> shopEntity = shopDAO.findById(goods.getShopId());
+        if (shopEntity.isPresent()) {
+            goodsEntity.setShop(shopEntity.get());
+        } else {
+            throw new BusinessException("no_such_shop");
+        }
+
+        goodsEntity.setCreateTime(new Date());
+        goodsEntity.setUpdateTime(new Date());
+        return goodsDAO.save(goodsEntity).getId();
     }
 
     @Override
@@ -156,11 +173,11 @@ public class GoodsMgnServiceImpl implements GoodsMgnService {
     }
 
     @Override
-    public GoodsTypeEntity addGoodsType(String typeName) {
+    public UUID addGoodsType(String typeName) {
         Assert.notNull(typeName, "typeName can not be null");
         GoodsTypeEntity goodsTypeEntity = new GoodsTypeEntity();
         goodsTypeEntity.setName(typeName);
-        return goodsTypeDAO.save(goodsTypeEntity);
+        return goodsTypeDAO.save(goodsTypeEntity).getId();
     }
 
     @Override

@@ -3,6 +3,7 @@ package org.acowzon.backend.ctrl.goods;
 import org.acowzon.backend.ctrl.DefaultWebResponse;
 import org.acowzon.backend.ctrl.goods.request.*;
 import org.acowzon.backend.dto.goods.GoodsDetailDTO;
+import org.acowzon.backend.dto.goods.GoodsTypeDTO;
 import org.acowzon.backend.entity.goods.GoodsTypeEntity;
 import org.acowzon.backend.exception.BusinessException;
 import org.acowzon.backend.service.goods.GoodsMgnService;
@@ -133,9 +134,9 @@ public class GoodsMgnCtrl {
         GoodsDetailDTO goods = new GoodsDetailDTO();
         BeanUtils.copyProperties(request, goods);
 
-        GoodsTypeEntity goodsTypeEntity = new GoodsTypeEntity();
-        goodsTypeEntity.setId(request.getTypeId());
-        goods.setType(goodsTypeEntity);
+        GoodsTypeDTO goodsTypeDTO = new GoodsTypeDTO();
+        goodsTypeDTO.setId(request.getTypeId());
+        goods.setType(goodsTypeDTO);
 
         return DefaultWebResponse.Builder.success("add_goods_success", goodsMgnService.addGoods(goods));
     }
