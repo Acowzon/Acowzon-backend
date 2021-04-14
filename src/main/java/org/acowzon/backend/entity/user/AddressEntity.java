@@ -5,10 +5,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
 import java.util.UUID;
@@ -17,13 +14,13 @@ import java.util.UUID;
 @NoArgsConstructor
 @Entity
 @Table(name = "t_Address")
-public class Address implements Serializable {
+public class AddressEntity implements Serializable {
 
     @Id
     @GenericGenerator(name = "idGenerator", strategy = "uuid2")
     @GeneratedValue(generator = "idGenerator")
     @Type(type="uuid-char")
-    private UUID addressId;   // 地址id
+    private UUID id;   // 地址id
 
     @NotEmpty
     private String country;  // 国家
@@ -36,4 +33,11 @@ public class Address implements Serializable {
 
     @NotEmpty
     private String detail;  // 具体地址
+
+    @Version
+    private int version;
+
+    public AddressEntity(UUID id) {
+        this.id = id;
+    }
 }

@@ -1,6 +1,6 @@
 package org.acowzon.backend.service.goods;
 
-import org.acowzon.backend.dto.goods.GoodsDTO;
+import org.acowzon.backend.dto.goods.GoodsDetailDTO;
 import org.acowzon.backend.entity.goods.GoodsEntity;
 import org.acowzon.backend.entity.goods.GoodsTypeEntity;
 import org.acowzon.backend.exception.BusinessException;
@@ -10,17 +10,17 @@ import java.util.UUID;
 
 public interface GoodsMgnService {
 
-    GoodsDTO getGoodsById(UUID id) throws BusinessException;
+    GoodsDetailDTO getGoodsById(UUID id) throws BusinessException;
 
-    GoodsDTO[] getAllGoods();
+    GoodsDetailDTO[] getAllGoods();
 
-    GoodsDTO[] getGoodsByRetailerId(UUID retailerId) throws BusinessException;
+    GoodsDetailDTO[] getGoodsByShopId(UUID shopId) throws BusinessException;
 
-    GoodsDTO[] queryGoods(Map map);
+    GoodsDetailDTO[] queryGoods(Map map);
 
-    GoodsEntity addGoods(GoodsDTO goodsDTO) throws BusinessException;
+    GoodsEntity addGoods(GoodsDetailDTO goodsDetailDTO) throws BusinessException;
 
-    void updateGoods(GoodsDTO goodsDTO) throws BusinessException;
+    void updateGoods(GoodsDetailDTO goodsDetailDTO) throws BusinessException;
 
     void deleteGoods(UUID id) throws BusinessException;
 

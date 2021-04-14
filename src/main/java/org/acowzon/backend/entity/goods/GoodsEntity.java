@@ -2,6 +2,7 @@ package org.acowzon.backend.entity.goods;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.acowzon.backend.entity.shop.ShopEntity;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 
@@ -32,7 +33,7 @@ public class GoodsEntity implements Serializable {
     @NotNull
     @Type(type="uuid-char")
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinTable(name = "goods_type_goods_type_relation")
+    @JoinColumn(foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
     private GoodsTypeEntity type; // 商品类型
 
     @NotNull
@@ -64,8 +65,9 @@ public class GoodsEntity implements Serializable {
     private Date updateTime; // 商品修改时间
 
     @NotNull
-    @Type(type="uuid-char")
-    private UUID retailerId; // 商品上架商家的id
+    @ManyToOne(fetch = FetchType.EAGER,optional = false)
+    @JoinColumn(foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
+    private ShopEntity shop; // 商品上架商家
 
     @Column()
     @Min(0)
@@ -75,4 +77,10 @@ public class GoodsEntity implements Serializable {
     @Min(0)
     private int views=0; // 商品的浏览数
 
+    @Version
+    private int version;
+
+    public GoodsEntity(UUID id) {
+        this.id = id;
+    }
 }

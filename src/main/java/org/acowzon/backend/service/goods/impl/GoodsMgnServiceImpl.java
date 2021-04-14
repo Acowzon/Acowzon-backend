@@ -2,9 +2,10 @@ package org.acowzon.backend.service.goods.impl;
 
 import org.acowzon.backend.dao.goods.GoodsDAO;
 import org.acowzon.backend.dao.goods.GoodsTypeDAO;
-import org.acowzon.backend.dto.goods.GoodsDTO;
+import org.acowzon.backend.dto.goods.GoodsDetailDTO;
 import org.acowzon.backend.entity.goods.GoodsEntity;
 import org.acowzon.backend.entity.goods.GoodsTypeEntity;
+import org.acowzon.backend.entity.shop.ShopEntity;
 import org.acowzon.backend.exception.BusinessException;
 import org.acowzon.backend.service.goods.GoodsMgnService;
 import org.acowzon.backend.utils.PublicBeanUtils;
@@ -27,45 +28,45 @@ public class GoodsMgnServiceImpl implements GoodsMgnService {
     GoodsTypeDAO goodsTypeDAO;
 
     @Override
-    public GoodsDTO getGoodsById(UUID goodsId) throws BusinessException {
+    public GoodsDetailDTO getGoodsById(UUID goodsId) throws BusinessException {
         Assert.notNull(goodsId, "goodsId can not be null");
         Optional<GoodsEntity> goods = goodsDAO.findById(goodsId);
         if (goods.isPresent()) {
-            GoodsDTO goodsDTO = new GoodsDTO();
-            BeanUtils.copyProperties(goods.get(), goodsDTO);
-            return goodsDTO;
+            GoodsDetailDTO goodsDetailDTO = new GoodsDetailDTO();
+            BeanUtils.copyProperties(goods.get(), goodsDetailDTO);
+            return goodsDetailDTO;
         } else {
             throw new BusinessException("no_such_goods");
         }
     }
 
     @Override
-    public GoodsDTO[] getAllGoods() {
+    public GoodsDetailDTO[] getAllGoods() {
         return goodsDAO.findAll().stream().map(goods -> {
-            GoodsDTO goodsDTO = new GoodsDTO();
-            BeanUtils.copyProperties(goods, goodsDTO);
-            return goodsDTO;
-        }).toArray(GoodsDTO[]::new);
+            GoodsDetailDTO goodsDetailDTO = new GoodsDetailDTO();
+            BeanUtils.copyProperties(goods, goodsDetailDTO);
+            return goodsDetailDTO;
+        }).toArray(GoodsDetailDTO[]::new);
     }
 
     @Override
-    public GoodsDTO[] getGoodsByRetailerId(UUID retailerId) throws BusinessException {
-        Assert.notNull(retailerId, "retailerId can not be null");
-        return goodsDAO.findAllByRetailerId(retailerId).stream().map(goods -> {
-            GoodsDTO goodsDTO = new GoodsDTO();
-            BeanUtils.copyProperties(goods, goodsDTO);
-            return goodsDTO;
-        }).toArray(GoodsDTO[]::new);
+    public GoodsDetailDTO[] getGoodsByShopId(UUID shopId) throws BusinessException {
+        Assert.notNull(shopId, "shopId can not be null");
+        return goodsDAO.findAllByShop(new ShopEntity(shopId)).stream().map(goods -> {
+            GoodsDetailDTO goodsDetailDTO = new GoodsDetailDTO();
+            BeanUtils.copyProperties(goods, goodsDetailDTO);
+            return goodsDetailDTO;
+        }).toArray(GoodsDetailDTO[]::new);
     }
 
     @Override
-    public GoodsDTO[] queryGoods(Map map) {
+    public GoodsDetailDTO[] queryGoods(Map map) {
         //todo:分页查询，多条件查询
         return null;
     }
 
     @Override
-    public GoodsEntity addGoods(GoodsDTO goods) throws BusinessException {
+    public GoodsEntity addGoods(GoodsDetailDTO goods) throws BusinessException {
         Assert.notNull(goods, "GoodsDTO can not be null");
         GoodsEntity goodsEntity = new GoodsEntity();
         BeanUtils.copyProperties(goods, goodsEntity);
@@ -81,11 +82,11 @@ public class GoodsMgnServiceImpl implements GoodsMgnService {
     }
 
     @Override
-    public void updateGoods(GoodsDTO goodsDTO) throws BusinessException {
-        Assert.notNull(goodsDTO, "GoodsDTO can not be null");
-        Optional<GoodsEntity> goods = goodsDAO.findById(goodsDTO.getId());
+    public void updateGoods(GoodsDetailDTO goodsDetailDTO) throws BusinessException {
+        Assert.notNull(goodsDetailDTO, "GoodsDTO can not be null");
+        Optional<GoodsEntity> goods = goodsDAO.findById(goodsDetailDTO.getId());
         if (goods.isPresent()) {
-            BeanUtils.copyProperties(goodsDTO, goods, PublicBeanUtils.getNullPropertyNames(goodsDTO));
+            BeanUtils.copyProperties(goodsDetailDTO, goods, PublicBeanUtils.getNullPropertyNames(goodsDetailDTO));
             goods.get().setUpdateTime(new Date());
             goodsDAO.save(goods.get());
         } else {

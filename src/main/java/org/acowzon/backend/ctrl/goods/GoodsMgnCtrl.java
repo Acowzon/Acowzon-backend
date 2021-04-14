@@ -2,7 +2,7 @@ package org.acowzon.backend.ctrl.goods;
 
 import org.acowzon.backend.ctrl.DefaultWebResponse;
 import org.acowzon.backend.ctrl.goods.request.*;
-import org.acowzon.backend.dto.goods.GoodsDTO;
+import org.acowzon.backend.dto.goods.GoodsDetailDTO;
 import org.acowzon.backend.entity.goods.GoodsTypeEntity;
 import org.acowzon.backend.exception.BusinessException;
 import org.acowzon.backend.service.goods.GoodsMgnService;
@@ -116,7 +116,7 @@ public class GoodsMgnCtrl {
     public DefaultWebResponse listShopGoods(@RequestBody UUIDParamRequest request) throws BusinessException {
         Assert.notNull(request, "request can not be null");
         logger.info(request.toString());
-        return DefaultWebResponse.Builder.success(goodsMgnService.getGoodsByRetailerId(request.getId()));
+        return DefaultWebResponse.Builder.success(goodsMgnService.getGoodsByShopId(request.getId()));
     }
 
     @PostMapping("query")
@@ -130,7 +130,7 @@ public class GoodsMgnCtrl {
     public DefaultWebResponse addGoods(@RequestBody AddGoodsRequest request) throws BusinessException {
         Assert.notNull(request, "request can not be null");
         logger.info(request.toString());
-        GoodsDTO goods = new GoodsDTO();
+        GoodsDetailDTO goods = new GoodsDetailDTO();
         BeanUtils.copyProperties(request, goods);
 
         GoodsTypeEntity goodsTypeEntity = new GoodsTypeEntity();
@@ -144,7 +144,7 @@ public class GoodsMgnCtrl {
     public DefaultWebResponse updateGoods(@RequestBody UpdateGoodsRequest request) throws BusinessException {
         Assert.notNull(request, "update goods request can not be null");
         logger.info(request.toString());
-        GoodsDTO goods = new GoodsDTO();
+        GoodsDetailDTO goods = new GoodsDetailDTO();
         BeanUtils.copyProperties(request, goods);
         goodsMgnService.updateGoods(goods);
         return DefaultWebResponse.Builder.success("update_goods_success");

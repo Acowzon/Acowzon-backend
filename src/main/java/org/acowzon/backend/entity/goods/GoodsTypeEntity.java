@@ -28,4 +28,11 @@ public class GoodsTypeEntity implements Serializable {
     @NotEmpty
     @Column(unique = true)
     private String name;   // 类别
+
+    @Version
+    private int version;
+
+    public GoodsTypeEntity(@NotNull UUID id) {
+        this.id = id;
+    }
 }
