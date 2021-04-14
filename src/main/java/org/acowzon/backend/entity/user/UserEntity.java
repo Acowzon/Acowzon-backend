@@ -2,6 +2,7 @@ package org.acowzon.backend.entity.user;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.acowzon.backend.entity.address.AddressEntity;
 import org.acowzon.backend.enums.SexEnum;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
@@ -66,7 +67,7 @@ public class UserEntity implements Serializable {
     @JoinTable(name = "r_user_address",
             foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT),
             inverseForeignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
-    private List<AddressEntity> address;   // 用户地址id
+    private List<AddressEntity> address;   // 用户地址
 
     private Date createTime;    // 用户创建时间
 

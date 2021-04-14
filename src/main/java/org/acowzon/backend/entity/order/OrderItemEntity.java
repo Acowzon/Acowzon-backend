@@ -21,13 +21,13 @@ public class OrderItemEntity {
     @Type(type="uuid-char")
     private UUID id; // 订单商品id
 
-    @ManyToOne(fetch = FetchType.EAGER,optional = false)
+    @ManyToOne(fetch = FetchType.LAZY,optional = false)
     @JoinColumn(foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
     private GoodsEntity goods; // 商品
 
     private int amount; // 商品数量
 
-    @ManyToOne(fetch = FetchType.EAGER,optional = false)
+    @ManyToOne(fetch = FetchType.LAZY,optional = false)
     @JoinColumn(foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
     private OrderEntity order; // 所属订单
 

@@ -65,7 +65,7 @@ public class GoodsEntity implements Serializable {
     private Date updateTime; // 商品修改时间
 
     @NotNull
-    @ManyToOne(fetch = FetchType.EAGER,optional = false)
+    @ManyToOne(fetch = FetchType.LAZY,optional = false)
     @JoinColumn(foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
     private ShopEntity shop; // 商品上架商家
 

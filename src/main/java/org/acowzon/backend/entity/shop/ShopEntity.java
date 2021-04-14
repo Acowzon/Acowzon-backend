@@ -3,7 +3,7 @@ package org.acowzon.backend.entity.shop;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.acowzon.backend.entity.goods.GoodsEntity;
-import org.acowzon.backend.entity.user.AddressEntity;
+import org.acowzon.backend.entity.address.AddressEntity;
 import org.acowzon.backend.entity.user.UserEntity;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;

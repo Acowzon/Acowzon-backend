@@ -1,4 +1,4 @@
-package org.acowzon.backend.entity.user;
+package org.acowzon.backend.entity.address;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
