@@ -12,6 +12,8 @@ import org.acowzon.backend.entity.shop.ShopEntity;
 import org.acowzon.backend.exception.BusinessException;
 import org.acowzon.backend.service.goods.GoodsMgnService;
 import org.acowzon.backend.utils.PublicBeanUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,6 +26,9 @@ import java.util.UUID;
 
 @Service
 public class GoodsMgnServiceImpl implements GoodsMgnService {
+
+    Logger logger = LoggerFactory.getLogger(this.getClass());
+
     @Autowired
     GoodsDAO goodsDAO;
 
@@ -91,11 +96,14 @@ public class GoodsMgnServiceImpl implements GoodsMgnService {
     @Override
     public void updateGoods(GoodsDetailDTO goodsDetailDTO) throws BusinessException {
         Assert.notNull(goodsDetailDTO, "GoodsDTO can not be null");
-        Optional<GoodsEntity> goods = goodsDAO.findById(goodsDetailDTO.getId());
-        if (goods.isPresent()) {
-            BeanUtils.copyProperties(goodsDetailDTO, goods, PublicBeanUtils.getNullPropertyNames(goodsDetailDTO));
-            goods.get().setUpdateTime(new Date());
-            goodsDAO.save(goods.get());
+        Optional<GoodsEntity> goodsOptional = goodsDAO.findById(goodsDetailDTO.getId());
+        if (goodsOptional.isPresent()) {
+            /**
+             * DTO内部不包含Entity类型，故直接copyProperties时会被忽略
+             */
+            BeanUtils.copyProperties(goodsDetailDTO, goodsOptional.get(), PublicBeanUtils.getNullPropertyNames(goodsDetailDTO));
+            goodsOptional.get().setUpdateTime(new Date());
+            goodsDAO.save(goodsOptional.get());
         } else {
             throw new BusinessException("no_such_goods");
         }
