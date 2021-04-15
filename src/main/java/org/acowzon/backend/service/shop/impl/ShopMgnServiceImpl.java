@@ -101,7 +101,7 @@ public class ShopMgnServiceImpl implements ShopMgnService {
         }
 
         ShopEntity shopEntity = new ShopEntity();
-        BeanUtils.copyProperties(shop, shopEntity);
+        BeanUtils.copyProperties(shop, shopEntity, "id");//忽略id字段，让后端自动生成
 
         shopEntity.setOwner(ownerOptional.get());
         return shopDAO.save(shopEntity).getId();
@@ -232,7 +232,7 @@ public class ShopMgnServiceImpl implements ShopMgnService {
     /**
      * 更新商铺地址信息
      *
-     * @param id            店铺id
+     * @param id         店铺id
      * @param addressDTO 地址信息表
      * @throws BusinessException 业务相关异常
      */
@@ -249,8 +249,8 @@ public class ShopMgnServiceImpl implements ShopMgnService {
         Set<AddressEntity> addressEntitySet = shopEntityOptional.get().getAddress();
 
         AddressEntity newAddr = new AddressEntity();
-        BeanUtils.copyProperties(addressDTO,newAddr);
-        newAddr.setId(null);
+
+        BeanUtils.copyProperties(addressDTO, newAddr, "id");//忽略id字段，让后端自动生成
         addressEntitySet.add(newAddr);
 
         shopDAO.save(shopEntityOptional.get());

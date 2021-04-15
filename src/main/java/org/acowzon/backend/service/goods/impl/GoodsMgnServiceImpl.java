@@ -5,6 +5,7 @@ import org.acowzon.backend.dao.goods.GoodsTypeDAO;
 import org.acowzon.backend.dao.shop.ShopDAO;
 import org.acowzon.backend.dto.goods.GoodsCatalogDTO;
 import org.acowzon.backend.dto.goods.GoodsDetailDTO;
+import org.acowzon.backend.dto.goods.GoodsTypeDTO;
 import org.acowzon.backend.entity.goods.GoodsEntity;
 import org.acowzon.backend.entity.goods.GoodsTypeEntity;
 import org.acowzon.backend.entity.shop.ShopEntity;
@@ -64,7 +65,9 @@ public class GoodsMgnServiceImpl implements GoodsMgnService {
     public UUID addGoods(GoodsDetailDTO goods) throws BusinessException {
         Assert.notNull(goods, "GoodsDTO can not be null");
         GoodsEntity goodsEntity = new GoodsEntity();
-        BeanUtils.copyProperties(goods, goodsEntity);
+
+        BeanUtils.copyProperties(goods, goodsEntity,"id");//忽略id字段，让后端自动生成
+
         Optional<GoodsTypeEntity> goodsTypeEntity = goodsTypeDAO.findById(goods.getType().getId());
 
         if (goodsTypeEntity.isPresent()) {
@@ -168,12 +171,14 @@ public class GoodsMgnServiceImpl implements GoodsMgnService {
     }
 
     @Override
-    public void updateGoodsType(GoodsTypeEntity goodsType) throws BusinessException {
+    public void updateGoodsType(GoodsTypeDTO goodsType) throws BusinessException {
         Assert.notNull(goodsType, "goodsType can not be null");
         if (!goodsTypeDAO.findById(goodsType.getId()).isPresent()) {
             throw new BusinessException("no_such_goods_type");
         }
-        goodsTypeDAO.save(goodsType);
+        GoodsTypeEntity goodsTypeEntity = new GoodsTypeEntity();
+        BeanUtils.copyProperties(goodsType,goodsTypeEntity);
+        goodsTypeDAO.save(goodsTypeEntity);
     }
 
     @Override

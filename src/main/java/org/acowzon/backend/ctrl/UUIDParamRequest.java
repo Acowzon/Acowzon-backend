@@ -1,4 +1,4 @@
-package org.acowzon.backend.ctrl.goods.request;
+package org.acowzon.backend.ctrl;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

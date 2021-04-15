@@ -2,6 +2,7 @@ package org.acowzon.backend.service.goods;
 
 import org.acowzon.backend.dto.goods.GoodsCatalogDTO;
 import org.acowzon.backend.dto.goods.GoodsDetailDTO;
+import org.acowzon.backend.dto.goods.GoodsTypeDTO;
 import org.acowzon.backend.entity.goods.GoodsTypeEntity;
 import org.acowzon.backend.exception.BusinessException;
 
@@ -34,7 +35,7 @@ public interface GoodsMgnService {
 
     UUID addGoodsType(String goodsType);
 
-    void updateGoodsType(GoodsTypeEntity goodsType) throws BusinessException;
+    void updateGoodsType(GoodsTypeDTO goodsType) throws BusinessException;
 
     void deleteGoodsType(UUID id) throws BusinessException;
 }

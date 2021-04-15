@@ -1,7 +1,7 @@
 package org.acowzon.backend.ctrl.shop;
 
 import org.acowzon.backend.ctrl.DefaultWebResponse;
-import org.acowzon.backend.ctrl.goods.request.UUIDParamRequest;
+import org.acowzon.backend.ctrl.UUIDParamRequest;
 import org.acowzon.backend.ctrl.shop.request.UpdateShopAddressRequest;
 import org.acowzon.backend.ctrl.shop.request.UpdateShopAdminRequest;
 import org.acowzon.backend.ctrl.shop.request.UpdateShopOwnerRequest;

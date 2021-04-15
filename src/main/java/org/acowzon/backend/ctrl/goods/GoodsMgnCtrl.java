@@ -1,15 +1,14 @@
 package org.acowzon.backend.ctrl.goods;
 
 import org.acowzon.backend.ctrl.DefaultWebResponse;
+import org.acowzon.backend.ctrl.UUIDParamRequest;
 import org.acowzon.backend.ctrl.goods.request.*;
 import org.acowzon.backend.dto.goods.GoodsDetailDTO;
 import org.acowzon.backend.dto.goods.GoodsTypeDTO;
-import org.acowzon.backend.entity.goods.GoodsTypeEntity;
 import org.acowzon.backend.exception.BusinessException;
 import org.acowzon.backend.service.goods.GoodsMgnService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
@@ -127,26 +126,18 @@ public class GoodsMgnCtrl {
     }
 
     @PostMapping("add")
-    public DefaultWebResponse addGoods(@RequestBody AddGoodsRequest request) throws BusinessException {
+    public DefaultWebResponse addGoods(@RequestBody GoodsDetailDTO request) throws BusinessException {
         Assert.notNull(request, "request can not be null");
         logger.info(request.toString());
-        GoodsDetailDTO goods = new GoodsDetailDTO();
-        BeanUtils.copyProperties(request, goods);
 
-        GoodsTypeDTO goodsTypeDTO = new GoodsTypeDTO();
-        goodsTypeDTO.setId(request.getTypeId());
-        goods.setType(goodsTypeDTO);
-
-        return DefaultWebResponse.Builder.success("add_goods_success", goodsMgnService.addGoods(goods));
+        return DefaultWebResponse.Builder.success("add_goods_success", goodsMgnService.addGoods(request));
     }
 
     @PostMapping("update")
-    public DefaultWebResponse updateGoods(@RequestBody UpdateGoodsRequest request) throws BusinessException {
+    public DefaultWebResponse updateGoods(@RequestBody GoodsDetailDTO request) throws BusinessException {
         Assert.notNull(request, "update goods request can not be null");
         logger.info(request.toString());
-        GoodsDetailDTO goods = new GoodsDetailDTO();
-        BeanUtils.copyProperties(request, goods);
-        goodsMgnService.updateGoods(goods);
+        goodsMgnService.updateGoods(request);
         return DefaultWebResponse.Builder.success("update_goods_success");
     }
 
@@ -175,7 +166,7 @@ public class GoodsMgnCtrl {
     }
 
     @PostMapping("type/add")
-    public DefaultWebResponse addGoodType(@RequestBody AddGoodsTypeRequest request) {
+    public DefaultWebResponse addGoodType(@RequestBody GoodsTypeDTO request) {
         Assert.notNull(request, "request can not be null");
         logger.info(request.toString());
 
@@ -183,12 +174,10 @@ public class GoodsMgnCtrl {
     }
 
     @PostMapping("type/update")
-    public DefaultWebResponse updateGoodType(@RequestBody UpdateTypeRequest request) throws BusinessException {
+    public DefaultWebResponse updateGoodType(@RequestBody GoodsTypeDTO request) throws BusinessException {
         Assert.notNull(request, "request can not be null");
         logger.info(request.toString());
-        GoodsTypeEntity goodsType = new GoodsTypeEntity();
-        BeanUtils.copyProperties(request, goodsType);
-        this.goodsMgnService.updateGoodsType(goodsType);
+        this.goodsMgnService.updateGoodsType(request);
         return DefaultWebResponse.Builder.success("update_goods_type_success");
     }
 
