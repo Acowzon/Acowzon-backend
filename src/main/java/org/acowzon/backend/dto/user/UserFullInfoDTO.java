@@ -2,7 +2,7 @@ package org.acowzon.backend.dto.user;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.acowzon.backend.entity.address.AddressEntity;
+import org.acowzon.backend.dto.address.AddressDTO;
 import org.acowzon.backend.enums.SexEnum;
 
 import java.util.Date;
@@ -36,6 +36,6 @@ public class UserFullInfoDTO {
 
     private Date updateTime;    // 用户修改时间
 
-    private List<AddressEntity> address;   // 用户地址
+    private List<AddressDTO> address;   // 用户地址
 
 }
