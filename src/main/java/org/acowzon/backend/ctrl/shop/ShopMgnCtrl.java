@@ -88,7 +88,7 @@ public class ShopMgnCtrl {
         Assert.notNull(request,"request can not be null");
         logger.info(request.toString());
         shopMgnService.addShopAddress(request.getShopId(),request.getAddress());
-        return DefaultWebResponse.Builder.success("add_shop_admin_success");
+        return DefaultWebResponse.Builder.success("add_shop_addr_success");
     }
 
     @PostMapping("deleteAddr")
@@ -96,6 +96,6 @@ public class ShopMgnCtrl {
         Assert.notNull(request,"request can not be null");
         logger.info(request.toString());
         shopMgnService.deleteShopAddress(request.getShopId(),request.getAddress().getId());
-        return DefaultWebResponse.Builder.success("delete_shop_admin_success");
+        return DefaultWebResponse.Builder.success("delete_shop_addr_success");
     }
 }
