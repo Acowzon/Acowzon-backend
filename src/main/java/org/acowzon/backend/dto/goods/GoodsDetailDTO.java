@@ -3,8 +3,10 @@ package org.acowzon.backend.dto.goods;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.acowzon.backend.entity.goods.GoodsEntity;
 import org.acowzon.backend.entity.goods.GoodsTypeEntity;
 import org.acowzon.backend.entity.shop.ShopEntity;
+import org.springframework.beans.BeanUtils;
 
 import java.util.UUID;
 
@@ -37,5 +39,14 @@ public class GoodsDetailDTO {
     private UUID shopId;
 
     private String shopName;
+
+    static public GoodsDetailDTO parseDTO(GoodsEntity entity) {
+        GoodsDetailDTO dto = new GoodsDetailDTO();
+        BeanUtils.copyProperties(entity, dto);
+        dto.setType(GoodsTypeDTO.parseDTO(entity.getType()));
+        dto.setShopId(entity.getShop().getId());
+        dto.setShopName(entity.getShop().getName());
+        return dto;
+    }
 
 }
