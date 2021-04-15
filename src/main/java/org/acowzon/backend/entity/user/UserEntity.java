@@ -3,6 +3,7 @@ package org.acowzon.backend.entity.user;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.acowzon.backend.entity.address.AddressEntity;
+import org.acowzon.backend.entity.order.OrderEntity;
 import org.acowzon.backend.enums.SexEnum;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
@@ -13,6 +14,7 @@ import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 
@@ -72,6 +74,9 @@ public class UserEntity implements Serializable {
     private Date createTime;    // 用户创建时间
 
     private Date updateTime;    // 用户修改时间
+
+    @OneToMany(cascade = CascadeType.ALL,fetch=FetchType.LAZY,orphanRemoval = true)
+    private Set<OrderEntity> orderSet;// 用户订单
 
     @Version
     private int version;
