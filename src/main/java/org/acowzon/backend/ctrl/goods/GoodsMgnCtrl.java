@@ -53,7 +53,6 @@ public class GoodsMgnCtrl {
      * }
      */
 
-
     /**
      * @api {POST} goods/detail 获取商品的详细信息
      * @apiGroup 商品管理
@@ -108,12 +107,12 @@ public class GoodsMgnCtrl {
         return DefaultWebResponse.Builder.success(goodsMgnService.getGoodsById(request.getId()));
     }
 
-    @PostMapping("listAllGoods")
+    @PostMapping("list/all")
     public DefaultWebResponse listAllGoods() {
         return DefaultWebResponse.Builder.success(goodsMgnService.getAllGoods());
     }
 
-    @PostMapping("listShopGoods")
+    @PostMapping("list/shop")
     public DefaultWebResponse listShopGoods(@RequestBody UUIDParamRequest request) throws BusinessException {
         Assert.notNull(request, "request can not be null");
         logger.info(request.toString());

@@ -3,8 +3,8 @@ package org.acowzon.backend.service.goods.impl;
 import org.acowzon.backend.dao.goods.GoodsDAO;
 import org.acowzon.backend.dao.goods.GoodsTypeDAO;
 import org.acowzon.backend.dao.shop.ShopDAO;
+import org.acowzon.backend.dto.goods.GoodsCatalogDTO;
 import org.acowzon.backend.dto.goods.GoodsDetailDTO;
-import org.acowzon.backend.dto.goods.GoodsTypeDTO;
 import org.acowzon.backend.entity.goods.GoodsEntity;
 import org.acowzon.backend.entity.goods.GoodsTypeEntity;
 import org.acowzon.backend.entity.shop.ShopEntity;
@@ -37,38 +37,25 @@ public class GoodsMgnServiceImpl implements GoodsMgnService {
         Assert.notNull(goodsId, "goodsId can not be null");
         Optional<GoodsEntity> goods = goodsDAO.findById(goodsId);
         if (goods.isPresent()) {
-            GoodsDetailDTO goodsDetailDTO = new GoodsDetailDTO();
-            BeanUtils.copyProperties(goods.get(), goodsDetailDTO);
-            return goodsDetailDTO;
+            return GoodsDetailDTO.parseDTO(goods.get());
         } else {
             throw new BusinessException("no_such_goods");
         }
     }
 
     @Override
-    public GoodsDetailDTO[] getAllGoods() {
-        return goodsDAO.findAll().stream().map(goods -> {
-            GoodsDetailDTO goodsDetailDTO = new GoodsDetailDTO();
-            BeanUtils.copyProperties(goods, goodsDetailDTO);
-            return goodsDetailDTO;
-        }).toArray(GoodsDetailDTO[]::new);
+    public GoodsCatalogDTO[] getAllGoods() {
+        return goodsDAO.findAll().stream().map(GoodsCatalogDTO::parseDTO).toArray(GoodsCatalogDTO[]::new);
     }
 
     @Override
-    public GoodsDetailDTO[] getGoodsByShopId(UUID shopId) throws BusinessException {
+    public GoodsCatalogDTO[] getGoodsByShopId(UUID shopId) throws BusinessException {
         Assert.notNull(shopId, "shopId can not be null");
-        return goodsDAO.findAllByShop(new ShopEntity(shopId)).stream().map(goods -> {
-            GoodsDetailDTO goodsDetailDTO = new GoodsDetailDTO();
-            BeanUtils.copyProperties(goods, goodsDetailDTO);
-            GoodsTypeDTO goodsTypeDTO = new GoodsTypeDTO();
-            BeanUtils.copyProperties(goods.getType(),goodsTypeDTO);
-            goodsDetailDTO.setType(goodsTypeDTO);
-            return goodsDetailDTO;
-        }).toArray(GoodsDetailDTO[]::new);
+        return goodsDAO.findAllByShop(new ShopEntity(shopId)).stream().map(GoodsCatalogDTO::parseDTO).toArray(GoodsCatalogDTO[]::new);
     }
 
     @Override
-    public GoodsDetailDTO[] queryGoods(Map map) {
+    public GoodsCatalogDTO[] queryGoods(Map map) {
         //todo:分页查询，多条件查询
         return null;
     }
