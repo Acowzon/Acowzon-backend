@@ -225,6 +225,9 @@ public class ShopMgnServiceImpl implements ShopMgnService {
         if (!owner.get().isSeller()) {
             throw new BusinessException("invalid_user_type");
         }
+        if(shopDAO.findAllByOwner(owner.get()).isPresent()) {
+            throw new BusinessException("user_already_assigned_shop");
+        }
         shopEntityOptional.get().setOwner(owner.get());
         shopDAO.save(shopEntityOptional.get());
     }
