@@ -29,14 +29,14 @@ public class ShopDetailDTO {
 
     private Set<UUID> adminId; // 管理员id
 
-    private Set<AddressDTO> addressIdSet; // 商铺地址
+    private Set<AddressDTO> addressSet; // 商铺地址
 
     static public ShopDetailDTO parseDTO(ShopEntity entity) {
         ShopDetailDTO dto = new ShopDetailDTO();
         BeanUtils.copyProperties(entity,dto);
         dto.setOwnerId(entity.getOwner().getId());
         dto.setAdminId(entity.getAdmin().stream().map(UserEntity::getId).collect(Collectors.toSet()));
-        dto.setAddressIdSet(entity.getAddress().stream().map(AddressDTO::parseDTO).collect(Collectors.toSet()));
+        dto.setAddressSet(entity.getAddress().stream().map(AddressDTO::parseDTO).collect(Collectors.toSet()));
         return dto;
     }
 

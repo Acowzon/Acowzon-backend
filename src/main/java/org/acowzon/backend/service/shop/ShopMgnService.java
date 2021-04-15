@@ -1,6 +1,7 @@
 package org.acowzon.backend.service.shop;
 
 import org.acowzon.backend.dao.address.AddressDAO;
+import org.acowzon.backend.dto.address.AddressDTO;
 import org.acowzon.backend.dto.shop.ShopCatalogDTO;
 import org.acowzon.backend.dto.shop.ShopDetailDTO;
 import org.acowzon.backend.entity.address.AddressEntity;
@@ -82,10 +83,10 @@ public interface ShopMgnService {
     /**
      * 添加商铺地址信息
      * @param id 店铺id
-     * @param addressEntity 地址信息表
+     * @param addressDTO 地址信息表
      * @throws BusinessException 业务相关异常
      */
-    void addShopAddress(UUID id, AddressEntity addressEntity) throws BusinessException;
+    void addShopAddress(UUID id, AddressDTO addressDTO) throws BusinessException;
 
     /**
      * 删除商铺地址信息

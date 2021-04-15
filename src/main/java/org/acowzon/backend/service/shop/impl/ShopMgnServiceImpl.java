@@ -3,6 +3,7 @@ package org.acowzon.backend.service.shop.impl;
 import org.acowzon.backend.dao.address.AddressDAO;
 import org.acowzon.backend.dao.shop.ShopDAO;
 import org.acowzon.backend.dao.user.UserDAO;
+import org.acowzon.backend.dto.address.AddressDTO;
 import org.acowzon.backend.dto.shop.ShopCatalogDTO;
 import org.acowzon.backend.dto.shop.ShopDetailDTO;
 import org.acowzon.backend.entity.address.AddressEntity;
@@ -11,6 +12,8 @@ import org.acowzon.backend.entity.user.UserEntity;
 import org.acowzon.backend.exception.BusinessException;
 import org.acowzon.backend.service.shop.ShopMgnService;
 import org.acowzon.backend.utils.PublicBeanUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,6 +27,8 @@ import java.util.UUID;
 
 @Service
 public class ShopMgnServiceImpl implements ShopMgnService {
+
+    Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     ShopDAO shopDAO;
@@ -87,18 +92,18 @@ public class ShopMgnServiceImpl implements ShopMgnService {
             throw new BusinessException("user_already_owned_a_shop");
         }
 
-        Optional<UserEntity> owner = userDAO.findById(shop.getOwnerId());
-        if (!owner.isPresent()) {
+        Optional<UserEntity> ownerOptional = userDAO.findById(shop.getOwnerId());
+        if (!ownerOptional.isPresent()) {
             throw new BusinessException("no_such_user");
         }
-        if (!owner.get().isSeller()) {
+        if (!ownerOptional.get().isSeller()) {
             throw new BusinessException("invalid_user_type");
         }
 
         ShopEntity shopEntity = new ShopEntity();
         BeanUtils.copyProperties(shop, shopEntity);
 
-        shopEntity.setOwner(owner.get());
+        shopEntity.setOwner(ownerOptional.get());
         return shopDAO.save(shopEntity).getId();
     }
 
@@ -111,15 +116,14 @@ public class ShopMgnServiceImpl implements ShopMgnService {
     @Override
     public void updateShop(ShopDetailDTO shop) throws BusinessException {
         Assert.notNull(shop, "shop can not be null");
-        Optional<ShopEntity> shopEntity = shopDAO.findById(shop.getId());
+        Optional<ShopEntity> shopEntityOptional = shopDAO.findById(shop.getId());
 
-        if (!shopEntity.isPresent()) {
+        if (!shopEntityOptional.isPresent()) {
             throw new BusinessException("no_such_shop");
         }
 
-        BeanUtils.copyProperties(shop, shopEntity, PublicBeanUtils.getNullPropertyNames(shop));
-
-        shopDAO.save(shopEntity.get());
+        BeanUtils.copyProperties(shop, shopEntityOptional.get(), PublicBeanUtils.getNullPropertyNames(shop));
+        shopDAO.save(shopEntityOptional.get());
     }
 
     /**
@@ -131,8 +135,8 @@ public class ShopMgnServiceImpl implements ShopMgnService {
     @Override
     public void deleteShop(UUID id) throws BusinessException {
         Assert.notNull(id, "uuid can not be null.");
-        Optional<ShopEntity> shopEntity = shopDAO.findById(id);
-        if (!shopEntity.isPresent()) {
+        Optional<ShopEntity> shopEntityOptional = shopDAO.findById(id);
+        if (!shopEntityOptional.isPresent()) {
             throw new BusinessException("no_such_shop");
         }
         shopDAO.deleteById(id);
@@ -149,23 +153,23 @@ public class ShopMgnServiceImpl implements ShopMgnService {
     @Transactional
     public void addShopAdmin(UUID id, UUID adminId) throws BusinessException {
         Assert.notNull(id, "uuid can not be null.");
-        Optional<ShopEntity> shopEntity = shopDAO.findById(id);
-        if (!shopEntity.isPresent()) {
+        Optional<ShopEntity> shopEntityOptional = shopDAO.findById(id);
+        if (!shopEntityOptional.isPresent()) {
             throw new BusinessException("no_such_shop");
         }
-        Optional<UserEntity> userEntity = userDAO.findById(adminId);
-        if (!userEntity.isPresent()) {
+        Optional<UserEntity> userEntityOptional = userDAO.findById(adminId);
+        if (!userEntityOptional.isPresent()) {
             throw new BusinessException("no_such_admin");
         }
-        if (shopEntity.get().getOwner().getId().equals(adminId)) {
+        if (shopEntityOptional.get().getOwner().getId().equals(adminId)) {
             throw new BusinessException("try_to_set_owner_as_admin");
         }
-        if (shopEntity.get().getAdmin().contains(userEntity.get())) {
+        if (shopEntityOptional.get().getAdmin().contains(userEntityOptional.get())) {
             throw new BusinessException("admin_already_exist");
         }
-        Set<UserEntity> adminList = shopEntity.get().getAdmin();
-        adminList.add(userEntity.get());
-        shopDAO.save(shopEntity.get());
+        Set<UserEntity> adminList = shopEntityOptional.get().getAdmin();
+        adminList.add(userEntityOptional.get());
+        shopDAO.save(shopEntityOptional.get());
     }
 
     /**
@@ -178,11 +182,11 @@ public class ShopMgnServiceImpl implements ShopMgnService {
     @Override
     public void deleteShopAdmin(UUID id, UUID adminId) throws BusinessException {
         Assert.notNull(id, "uuid can not be null.");
-        Optional<ShopEntity> shopEntity = shopDAO.findById(id);
-        if (!shopEntity.isPresent()) {
+        Optional<ShopEntity> shopEntityOptional = shopDAO.findById(id);
+        if (!shopEntityOptional.isPresent()) {
             throw new BusinessException("no_such_shop");
         }
-        if (shopEntity.get().getAdmin().isEmpty()) {
+        if (shopEntityOptional.get().getAdmin().isEmpty()) {
             throw new BusinessException("shop_admin_list_is_empty");
         }
 
@@ -191,13 +195,13 @@ public class ShopMgnServiceImpl implements ShopMgnService {
             throw new BusinessException("no_such_admin");
         }
 
-        if (!shopEntity.get().getAdmin().contains(admin.get())) {
+        if (!shopEntityOptional.get().getAdmin().contains(admin.get())) {
             throw new BusinessException("admin_not_in_this_shop");
         }
 
-        Set<UserEntity> adminList = shopEntity.get().getAdmin();
+        Set<UserEntity> adminList = shopEntityOptional.get().getAdmin();
         adminList.remove(admin.get());
-        shopDAO.save(shopEntity.get());
+        shopDAO.save(shopEntityOptional.get());
     }
 
     /**
@@ -210,8 +214,8 @@ public class ShopMgnServiceImpl implements ShopMgnService {
     @Override
     public void updateShopOwner(UUID id, UUID ownerId) throws BusinessException {
         Assert.notNull(id, "id can not be null");
-        Optional<ShopEntity> shopEntity = shopDAO.findById(id);
-        if (!shopEntity.isPresent()) {
+        Optional<ShopEntity> shopEntityOptional = shopDAO.findById(id);
+        if (!shopEntityOptional.isPresent()) {
             throw new BusinessException("no_such_shop");
         }
         Optional<UserEntity> owner = userDAO.findById(ownerId);
@@ -221,34 +225,35 @@ public class ShopMgnServiceImpl implements ShopMgnService {
         if (!owner.get().isSeller()) {
             throw new BusinessException("invalid_user_type");
         }
-        shopEntity.get().setOwner(owner.get());
-        shopDAO.save(shopEntity.get());
+        shopEntityOptional.get().setOwner(owner.get());
+        shopDAO.save(shopEntityOptional.get());
     }
 
     /**
      * 更新商铺地址信息
      *
      * @param id            店铺id
-     * @param addressEntity 地址信息表
+     * @param addressDTO 地址信息表
      * @throws BusinessException 业务相关异常
      */
     @Override
     @Transactional
-    public void addShopAddress(UUID id, AddressEntity addressEntity) throws BusinessException {
+    public void addShopAddress(UUID id, AddressDTO addressDTO) throws BusinessException {
         Assert.notNull(id, "id can not be null");
-        Assert.notNull(addressEntity, "addressEntity can not be null");
-        Optional<ShopEntity> shopEntity = shopDAO.findById(id);
-        if (!shopEntity.isPresent()) {
+        Assert.notNull(addressDTO, "addressDTO can not be null");
+        Optional<ShopEntity> shopEntityOptional = shopDAO.findById(id);
+        if (!shopEntityOptional.isPresent()) {
             throw new BusinessException("no_such_shop");
         }
-        //Todo 这里用contains比较是否可行？
-        if (shopEntity.get().getAddress().contains(addressEntity)) {
-            throw new BusinessException("address_already_exist");
-        }
-        Set<AddressEntity> addressEntitySet = shopEntity.get().getAddress();
-        addressEntitySet.add(addressEntity);
 
-        shopDAO.save(shopEntity.get());
+        Set<AddressEntity> addressEntitySet = shopEntityOptional.get().getAddress();
+
+        AddressEntity newAddr = new AddressEntity();
+        BeanUtils.copyProperties(addressDTO,newAddr);
+        newAddr.setId(null);
+        addressEntitySet.add(newAddr);
+
+        shopDAO.save(shopEntityOptional.get());
     }
 
     /**
@@ -262,12 +267,12 @@ public class ShopMgnServiceImpl implements ShopMgnService {
     public void deleteShopAddress(UUID id, UUID addressId) throws BusinessException {
         Assert.notNull(id, "id can not be null");
         Assert.notNull(addressId, "addressId can not be null");
-        Optional<ShopEntity> shopEntity = shopDAO.findById(id);
-        if (!shopEntity.isPresent()) {
+        Optional<ShopEntity> shopEntityOptional = shopDAO.findById(id);
+        if (!shopEntityOptional.isPresent()) {
             throw new BusinessException("no_such_shop");
         }
 
-        if (shopEntity.get().getAddress().isEmpty()) {
+        if (shopEntityOptional.get().getAddress().isEmpty()) {
             throw new BusinessException("shop_address_list_is_empty");
         }
 
@@ -276,9 +281,9 @@ public class ShopMgnServiceImpl implements ShopMgnService {
             throw new BusinessException("no_such_address");
         }
         //todo 这里需要改成双向级联操作，不用每次都先从shop表中提取再删除再保存
-        Set<AddressEntity> addressEntitySet = shopEntity.get().getAddress();
+        Set<AddressEntity> addressEntitySet = shopEntityOptional.get().getAddress();
         addressEntitySet.remove(addressEntityOptional.get());
 
-        shopDAO.save(shopEntity.get());
+        shopDAO.save(shopEntityOptional.get());
     }
 }
