@@ -36,16 +36,12 @@ public class UserFullInfoDTO {
 
     private boolean isSeller;   // 该用户是否是卖家
 
-    private Date createTime;    // 用户创建时间
-
-    private Date updateTime;    // 用户修改时间
-
-    private Set<AddressDTO> address;   // 用户地址
+    private Set<AddressDTO> addressSet;   // 用户地址
 
     static public UserFullInfoDTO parseDTO(UserEntity entity) {
         UserFullInfoDTO dto = new UserFullInfoDTO();
         BeanUtils.copyProperties(entity, dto);
-        dto.setAddress(entity.getAddress().stream().map(AddressDTO::parseDTO).collect(Collectors.toSet()));
+        dto.setAddressSet(entity.getAddress().stream().map(AddressDTO::parseDTO).collect(Collectors.toSet()));
         return dto;
     }
 }

@@ -5,11 +5,13 @@ import lombok.NoArgsConstructor;
 import org.acowzon.backend.entity.user.UserEntity;
 import org.springframework.beans.BeanUtils;
 
+import java.util.UUID;
+
 @Data
 @NoArgsConstructor
 public class UserBasicInfoDTO {
 
-    private String id; // 用户id
+    private UUID id; // 用户id
 
     private String userName;    // 登录用户名
 

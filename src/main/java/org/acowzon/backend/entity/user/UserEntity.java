@@ -30,11 +30,13 @@ public class UserEntity implements Serializable {
     private UUID id;  // 用户id
 
     @NotEmpty
+    @Column(unique = true)
     @Length(max = 32)
     private String userName;    // 登录用户名
 
     @NotEmpty
-    @Length(max = 256)
+    @Lob
+    @Column(columnDefinition = "TEXT")
     private String password;     // 登录密码
 
     @NotEmpty
@@ -43,7 +45,7 @@ public class UserEntity implements Serializable {
 
     @NotEmpty
     @Length(max = 32)
-    private String nickname;    // 用户昵称
+    private String nickName;    // 用户昵称
 
     @NotEmpty
     @Lob
@@ -54,7 +56,6 @@ public class UserEntity implements Serializable {
     @Length(max = 16)
     private String tel;   // 用户电话
 
-    @NotEmpty
     private String email;   // 用户邮箱
 
     @Enumerated
@@ -74,7 +75,7 @@ public class UserEntity implements Serializable {
 
     private Date updateTime;    // 用户修改时间
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private Set<OrderEntity> orderSet;// 用户订单
 
     @Version
