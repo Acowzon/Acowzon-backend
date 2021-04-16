@@ -11,6 +11,7 @@ import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
+import java.util.Date;
 import java.util.Set;
 import java.util.UUID;
 
@@ -53,6 +54,10 @@ public class ShopEntity {
             foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT),
             inverseForeignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
     private Set<AddressEntity> address;
+
+    private Date createTime;    // 商铺创建时间
+
+    private Date updateTime;    // 商铺修改时间
 
     public ShopEntity(UUID id) {
         this.id = id;

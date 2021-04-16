@@ -10,4 +10,5 @@ import java.util.UUID;
 
 public interface ShopDAO extends JpaRepository<ShopEntity, UUID>, JpaSpecificationExecutor<ShopEntity> {
     Optional<ShopEntity> findAllByOwner(UserEntity owner);
+    void deleteByOwner(UserEntity owner);
 }

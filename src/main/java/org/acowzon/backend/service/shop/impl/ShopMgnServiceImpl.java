@@ -20,10 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import javax.transaction.Transactional;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class ShopMgnServiceImpl implements ShopMgnService {
@@ -104,6 +101,9 @@ public class ShopMgnServiceImpl implements ShopMgnService {
         BeanUtils.copyProperties(shop, shopEntity, "id");//忽略id字段，让后端自动生成
 
         shopEntity.setOwner(ownerOptional.get());
+
+        shopEntity.setCreateTime(new Date());
+        shopEntity.setUpdateTime(new Date());
         return shopDAO.save(shopEntity).getId();
     }
 
@@ -123,6 +123,8 @@ public class ShopMgnServiceImpl implements ShopMgnService {
         }
 
         BeanUtils.copyProperties(shop, shopEntityOptional.get(), PublicBeanUtils.getNullPropertyNames(shop));
+
+        shopEntityOptional.get().setUpdateTime(new Date());
         shopDAO.save(shopEntityOptional.get());
     }
 
@@ -169,6 +171,7 @@ public class ShopMgnServiceImpl implements ShopMgnService {
         }
         Set<UserEntity> adminList = shopEntityOptional.get().getAdmin();
         adminList.add(userEntityOptional.get());
+        shopEntityOptional.get().setUpdateTime(new Date());
         shopDAO.save(shopEntityOptional.get());
     }
 
@@ -201,6 +204,7 @@ public class ShopMgnServiceImpl implements ShopMgnService {
 
         Set<UserEntity> adminList = shopEntityOptional.get().getAdmin();
         adminList.remove(admin.get());
+        shopEntityOptional.get().setUpdateTime(new Date());
         shopDAO.save(shopEntityOptional.get());
     }
 
@@ -229,6 +233,7 @@ public class ShopMgnServiceImpl implements ShopMgnService {
             throw new BusinessException("user_already_assigned_shop");
         }
         shopEntityOptional.get().setOwner(owner.get());
+        shopEntityOptional.get().setUpdateTime(new Date());
         shopDAO.save(shopEntityOptional.get());
     }
 
@@ -255,7 +260,7 @@ public class ShopMgnServiceImpl implements ShopMgnService {
 
         BeanUtils.copyProperties(addressDTO, newAddr, "id");//忽略id字段，让后端自动生成
         addressEntitySet.add(newAddr);
-
+        shopEntityOptional.get().setUpdateTime(new Date());
         shopDAO.save(shopEntityOptional.get());
     }
 
@@ -286,7 +291,7 @@ public class ShopMgnServiceImpl implements ShopMgnService {
         //todo 这里需要改成双向级联操作，不用每次都先从shop表中提取再删除再保存
         Set<AddressEntity> addressEntitySet = shopEntityOptional.get().getAddress();
         addressEntitySet.remove(addressEntityOptional.get());
-
+        shopEntityOptional.get().setUpdateTime(new Date());
         shopDAO.save(shopEntityOptional.get());
     }
 }
