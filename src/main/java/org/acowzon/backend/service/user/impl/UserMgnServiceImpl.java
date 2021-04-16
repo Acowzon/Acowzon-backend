@@ -138,7 +138,7 @@ public class UserMgnServiceImpl implements UserMgnService {
     public void updateUser(UserFullInfoDTO userFullInfoDTO) throws BusinessException {
         Optional<UserEntity> userEntityOptional = userDAO.findById(userFullInfoDTO.getId());
         if (userEntityOptional.isPresent()) {
-            List<String> ignoredPropertyList = Arrays.asList(PublicBeanUtils.getNullPropertyNames(userFullInfoDTO));
+            List<String> ignoredPropertyList =  new ArrayList(Arrays.asList(PublicBeanUtils.getNullPropertyNames(userFullInfoDTO)));
             ignoredPropertyList.add("isSeller");
             BeanUtils.copyProperties(userFullInfoDTO, userEntityOptional.get(),ignoredPropertyList.toArray(new String[ignoredPropertyList.size()+1]));
             userEntityOptional.get().setUpdateTime(new Date());
