@@ -4,6 +4,8 @@ import org.acowzon.backend.dao.address.AddressDAO;
 import org.acowzon.backend.dao.goods.GoodsDAO;
 import org.acowzon.backend.dao.order.OrderDAO;
 import org.acowzon.backend.dao.order.OrderItemDAO;
+import org.acowzon.backend.dao.shop.ShopDAO;
+import org.acowzon.backend.dao.user.UserDAO;
 import org.acowzon.backend.dto.order.OrderDTO;
 import org.acowzon.backend.dto.order.OrderDetailDTO;
 import org.acowzon.backend.dto.order.OrderItemDTO;
@@ -20,8 +22,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.Date;
 import java.util.Optional;
 import java.util.Set;
@@ -41,6 +45,12 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     AddressDAO addressDAO;
+
+    @Autowired
+    UserDAO userDAO;
+
+    @Autowired
+    ShopDAO shopDAO;
 
     @Autowired
     GoodsDAO goodsDAO;
@@ -145,10 +155,25 @@ public class OrderServiceImpl implements OrderService {
      * @throws BusinessException 业务相关异常
      */
     @Override
+    @Transactional
+    @Modifying
     public UUID addOrder(OrderDetailDTO orderDetailDTO) throws BusinessException {
         OrderEntity orderEntity = new OrderEntity();
-        orderEntity.setCustomer(new UserEntity(orderDetailDTO.getCustomerId()));
-        orderEntity.setShop(new ShopEntity(orderDetailDTO.getShopId()));
+
+        Optional<UserEntity> customerOptional = userDAO.findById(orderDetailDTO.getCustomerId());
+        if(!customerOptional.isPresent()) {
+            throw new BusinessException("no_such_customer");
+        }
+        Optional<ShopEntity> shopOptional = shopDAO.findById(orderDetailDTO.getShopId());
+        if(!shopOptional.isPresent()) {
+            throw new BusinessException("no_such_shop");
+        }
+
+        orderEntity.setCustomer(customerOptional.get());
+        orderEntity.setShop(shopOptional.get());
+
+        orderEntity.setOrderStatus(OrderStatusEnum.NEW);
+        orderEntity.setPaymentStatus(PaymentStatusEnum.WAITING);
         orderEntity.setCreateTime(new Date());
         orderEntity.setUpdateTime(new Date());
 
@@ -171,7 +196,7 @@ public class OrderServiceImpl implements OrderService {
         Set<OrderItemEntity> itemSet = orderDetailDTO.getItems().stream().map(orderItemDTO -> {
             OrderItemEntity entity = new OrderItemEntity();
             if (orderItemDTO.getGoodsId() != null) {
-                goodsDAO.findById(orderItemDTO.getGoodsId()).ifPresent(
+                goodsDAO.findByShopAndId(new ShopEntity(orderDetailDTO.getShopId()),orderItemDTO.getGoodsId()).ifPresent(
                         goodsEntity -> {
                             entity.setGoods(goodsEntity);
                             BeanUtils.copyProperties(orderItemDTO, entity);

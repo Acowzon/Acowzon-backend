@@ -24,14 +24,14 @@ public class GoodsEntity implements Serializable {
     @Id
     @GenericGenerator(name = "idGenerator", strategy = "uuid2")
     @GeneratedValue(generator = "idGenerator")
-    @Type(type="uuid-char")
+    @Type(type = "uuid-char")
     private UUID id; // 商品id
 
     @NotEmpty
     private String name; // 商品名称
 
     @NotNull
-    @Type(type="uuid-char")
+    @Type(type = "uuid-char")
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
     private GoodsTypeEntity type; // 商品类型
@@ -41,7 +41,7 @@ public class GoodsEntity implements Serializable {
 
     @NotEmpty
     @Lob
-    @Column(columnDefinition="TEXT")
+    @Column(columnDefinition = "TEXT")
     private String imageUrl; // 商品图片的存储地址
 
     @NotEmpty
@@ -65,17 +65,17 @@ public class GoodsEntity implements Serializable {
     private Date updateTime; // 商品修改时间
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY,optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
     private ShopEntity shop; // 商品上架商家
 
     @Column()
     @Min(0)
-    private int starsCount =0; // 喜欢此商品的人数
+    private int starsCount = 0; // 喜欢此商品的人数
 
     @Column()
     @Min(0)
-    private int views=0; // 商品的浏览数
+    private int views = 0; // 商品的浏览数
 
     @Version
     private int version;

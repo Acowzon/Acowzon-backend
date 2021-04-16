@@ -75,7 +75,7 @@ public class UserEntity implements Serializable {
 
     private Date updateTime;    // 用户修改时间
 
-    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToMany(mappedBy = "customer",cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private Set<OrderEntity> orderSet;// 用户订单
 
     @Version
