@@ -8,7 +8,7 @@ import org.acowzon.backend.exception.BusinessException;
 
 import java.util.UUID;
 
-public interface UserService {
+public interface UserMgnService {
 
     /**
      * 获取用户的基本信息
@@ -53,7 +53,7 @@ public interface UserService {
      * @return 生成的uuid
      * @throws BusinessException 业务相关异常
      */
-    UUID addUser(UserFullInfoDTO userFullInfoDTO) throws BusinessException;
+    UUID addUser(UserFullInfoDTO userFullInfoDTO,String password) throws BusinessException;
 
     /**
      * 更新用户信息
@@ -76,6 +76,14 @@ public interface UserService {
      * @throws BusinessException 业务相关异常
      */
     void setUserSeller(UUID id,boolean isSeller) throws BusinessException;
+
+    /**
+     * 修改用户密码
+     * @param id 用户id
+     * @param password 新密码
+     * @throws BusinessException 业务相关异常
+     */
+    void updateUserPassword(UUID id,String password) throws BusinessException;
 
     /**
      * 添加用户地址
