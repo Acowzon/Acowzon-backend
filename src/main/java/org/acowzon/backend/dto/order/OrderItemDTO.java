@@ -2,6 +2,9 @@ package org.acowzon.backend.dto.order;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.acowzon.backend.entity.order.OrderEntity;
+import org.acowzon.backend.entity.order.OrderItemEntity;
+import org.springframework.beans.BeanUtils;
 
 import java.util.UUID;
 
@@ -20,5 +23,13 @@ public class OrderItemDTO {
 
     private int amount; // 商品数量
 
-    private UUID orderId; // 所属订单id
+    static public OrderItemDTO parseDTO(OrderItemEntity entity) {
+        OrderItemDTO dto = new OrderItemDTO();
+        BeanUtils.copyProperties(entity, dto);
+        dto.setGoodsId(entity.getGoods().getId());
+        dto.setGoodsName(entity.getGoods().getName());
+        dto.setImageUrl(entity.getGoods().getImageUrl());
+        dto.setPrice(entity.getGoods().getPrice());
+        return dto;
+    }
 }

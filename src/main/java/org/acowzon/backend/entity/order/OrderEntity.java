@@ -33,7 +33,7 @@ public class OrderEntity implements Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY,optional = false)
     @JoinColumn(foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
-    private UserEntity user;  // 用户
+    private UserEntity customer;  // 用户
 
     @ManyToOne(fetch = FetchType.LAZY,optional = false)
     @JoinColumn(foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
@@ -50,10 +50,10 @@ public class OrderEntity implements Serializable {
     private double orderPrice;  // 订单价格
 
     @Enumerated
-    private OrderStatusEnum orderState; // 订单状态 0未支付 1已支付 2取消订单
+    private OrderStatusEnum orderStatus; // 订单状态 0未支付 1已支付 2取消订单
 
     @Enumerated
-    private PaymentStatusEnum paymentState; // 支付状态
+    private PaymentStatusEnum paymentStatus; // 支付状态
 
     private Date createTime; // 订单创建的时间
 
