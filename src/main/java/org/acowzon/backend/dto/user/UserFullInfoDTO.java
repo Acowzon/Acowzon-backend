@@ -3,16 +3,20 @@ package org.acowzon.backend.dto.user;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.acowzon.backend.dto.address.AddressDTO;
+import org.acowzon.backend.entity.user.UserEntity;
 import org.acowzon.backend.enums.SexEnum;
+import org.springframework.beans.BeanUtils;
 
 import java.util.Date;
-import java.util.List;
+import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Data
 @NoArgsConstructor
 public class UserFullInfoDTO {
 
-    private String id; // 用户id
+    private UUID id; // 用户id
 
     private String realName;    // 用户真实姓名
 
@@ -36,6 +40,12 @@ public class UserFullInfoDTO {
 
     private Date updateTime;    // 用户修改时间
 
-    private List<AddressDTO> address;   // 用户地址
+    private Set<AddressDTO> address;   // 用户地址
 
+    static public UserFullInfoDTO parseDTO(UserEntity entity) {
+        UserFullInfoDTO dto = new UserFullInfoDTO();
+        BeanUtils.copyProperties(entity, dto);
+        dto.setAddress(entity.getAddress().stream().map(AddressDTO::parseDTO).collect(Collectors.toSet()));
+        return dto;
+    }
 }

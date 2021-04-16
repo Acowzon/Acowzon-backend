@@ -13,7 +13,6 @@ import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -27,7 +26,7 @@ public class UserEntity implements Serializable {
     @Id
     @GenericGenerator(name = "idGenerator", strategy = "uuid2")
     @GeneratedValue(generator = "idGenerator")
-    @Type(type="uuid-char")
+    @Type(type = "uuid-char")
     private UUID id;  // 用户id
 
     @NotEmpty
@@ -35,7 +34,7 @@ public class UserEntity implements Serializable {
     private String userName;    // 登录用户名
 
     @NotEmpty
-    @Length(max = 32)
+    @Length(max = 256)
     private String password;     // 登录密码
 
     @NotEmpty
@@ -48,7 +47,7 @@ public class UserEntity implements Serializable {
 
     @NotEmpty
     @Lob
-    @Column(columnDefinition="TEXT")
+    @Column(columnDefinition = "TEXT")
     private String imageUrl;   // 用户头像的路径
 
     @NotEmpty
@@ -65,17 +64,17 @@ public class UserEntity implements Serializable {
 
     private boolean isSeller;   // 该用户是否是卖家
 
-    @OneToMany(cascade = CascadeType.ALL,fetch=FetchType.LAZY,orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinTable(name = "r_user_address",
             foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT),
             inverseForeignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
-    private List<AddressEntity> address;   // 用户地址
+    private Set<AddressEntity> address;   // 用户地址
 
     private Date createTime;    // 用户创建时间
 
     private Date updateTime;    // 用户修改时间
 
-    @OneToMany(cascade = CascadeType.ALL,fetch=FetchType.LAZY,orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private Set<OrderEntity> orderSet;// 用户订单
 
     @Version
