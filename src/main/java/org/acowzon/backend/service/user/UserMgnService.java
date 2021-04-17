@@ -6,6 +6,7 @@ import org.acowzon.backend.dto.user.UserBasicInfoDTO;
 import org.acowzon.backend.dto.user.UserFullInfoDTO;
 import org.acowzon.backend.exception.BusinessException;
 
+import java.util.Optional;
 import java.util.UUID;
 
 public interface UserMgnService {
@@ -51,7 +52,7 @@ public interface UserMgnService {
      * @return 登录状态
      * @throws BusinessException 业务相关异常
      */
-    boolean verifyUser(String userName, String password) throws BusinessException;
+    Optional<UUID> verifyUser(String userName, String password) throws BusinessException;
 
     /**
      * 注册用户

@@ -102,10 +102,14 @@ public class UserMgnServiceImpl implements UserMgnService {
      * @throws BusinessException 业务相关异常
      */
     @Override
-    public boolean verifyUser(String userName, String password) throws BusinessException {
+    public Optional<UUID> verifyUser(String userName, String password) throws BusinessException {
         Optional<UserEntity> userEntityOptional = userDAO.findByUserName(userName);
         if (userEntityOptional.isPresent()) {
-            return passwordEncoder.matches(password, userEntityOptional.get().getPassword());
+            if (passwordEncoder.matches(password, userEntityOptional.get().getPassword())) {
+                return Optional.of(userEntityOptional.get().getId());
+            } else {
+                return Optional.empty();
+            }
         } else {
             throw new BusinessException("no_such_user");
         }

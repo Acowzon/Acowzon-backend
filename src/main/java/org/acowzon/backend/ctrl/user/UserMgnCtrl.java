@@ -17,6 +17,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
+import java.util.UUID;
+
 
 @CrossOrigin
 @RestController
@@ -51,9 +54,9 @@ public class UserMgnCtrl {
     public DefaultWebResponse verify(@RequestBody VerifyUserInfoRequest request) throws BusinessException {
         Assert.notNull(request, "request can not be null");
         logger.info(request.toString());
-        boolean accept = userMgnService.verifyUser(request.getUserName(), request.getPassword());
-        if (accept) {
-            return DefaultWebResponse.Builder.success("accept_user");
+        Optional<UUID> userIdOptional = userMgnService.verifyUser(request.getUserName(), request.getPassword());
+        if (userIdOptional.isPresent()) {
+            return DefaultWebResponse.Builder.success("accept_user",userIdOptional.get());
         } else {
             return DefaultWebResponse.Builder.fail("reject_user");
         }
