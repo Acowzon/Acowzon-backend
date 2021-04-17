@@ -1,12 +1,14 @@
 package org.acowzon.backend.service.shop.impl;
 
 import org.acowzon.backend.dao.address.AddressDAO;
+import org.acowzon.backend.dao.goods.GoodsDAO;
 import org.acowzon.backend.dao.shop.ShopDAO;
 import org.acowzon.backend.dao.user.UserDAO;
 import org.acowzon.backend.dto.address.AddressDTO;
 import org.acowzon.backend.dto.shop.ShopCatalogDTO;
 import org.acowzon.backend.dto.shop.ShopDetailDTO;
 import org.acowzon.backend.entity.address.AddressEntity;
+import org.acowzon.backend.entity.goods.GoodsEntity;
 import org.acowzon.backend.entity.shop.ShopEntity;
 import org.acowzon.backend.entity.user.UserEntity;
 import org.acowzon.backend.exception.BusinessException;
@@ -32,6 +34,9 @@ public class ShopMgnServiceImpl implements ShopMgnService {
 
     @Autowired
     UserDAO userDAO;
+
+    @Autowired
+    GoodsDAO goodsDAO;
 
     @Autowired
     AddressDAO addressDAO;
@@ -98,7 +103,7 @@ public class ShopMgnServiceImpl implements ShopMgnService {
         }
 
         ShopEntity shopEntity = new ShopEntity();
-        BeanUtils.copyProperties(shop, shopEntity, "id");//忽略id字段，让后端自动生成
+        BeanUtils.copyProperties(shop, shopEntity, "id", "adminId", "addressSet");//忽略id字段，让后端自动生成
 
         shopEntity.setOwner(ownerOptional.get());
 
@@ -122,7 +127,10 @@ public class ShopMgnServiceImpl implements ShopMgnService {
             throw new BusinessException("no_such_shop");
         }
 
-        BeanUtils.copyProperties(shop, shopEntityOptional.get(), PublicBeanUtils.getNullPropertyNames(shop));
+        ArrayList<String> ignoredPropertyList = new ArrayList(Arrays.asList(PublicBeanUtils.getNullPropertyNames(shop)));
+        ignoredPropertyList.add("adminId");
+        ignoredPropertyList.add("addressSet");
+        BeanUtils.copyProperties(shop, shopEntityOptional.get(), ignoredPropertyList.toArray(new String[0]));
 
         shopEntityOptional.get().setUpdateTime(new Date());
         shopDAO.save(shopEntityOptional.get());
@@ -141,6 +149,14 @@ public class ShopMgnServiceImpl implements ShopMgnService {
         if (!shopEntityOptional.isPresent()) {
             throw new BusinessException("no_such_shop");
         }
+
+        //shop 和 goods 存在双向依赖，其中shop对goods存在级联操作，会出现无限循环，因此应该先删除绑定的goods，再删除goods
+        //并且这里不能用stream.map来操作，可能和多线程有关？
+        List<GoodsEntity> goodsEntityList = goodsDAO.findAllByShop(shopEntityOptional.get());
+        for (GoodsEntity goods : goodsEntityList) {
+            goodsDAO.delete(goods);
+        }
+
         shopDAO.deleteById(id);
     }
 
@@ -229,7 +245,7 @@ public class ShopMgnServiceImpl implements ShopMgnService {
         if (!owner.get().isSeller()) {
             throw new BusinessException("invalid_user_type");
         }
-        if(shopDAO.findAllByOwner(owner.get()).isPresent()) {
+        if (shopDAO.findAllByOwner(owner.get()).isPresent()) {
             throw new BusinessException("user_already_assigned_shop");
         }
         shopEntityOptional.get().setOwner(owner.get());

@@ -2,8 +2,8 @@ package org.acowzon.backend.entity.shop;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.acowzon.backend.entity.goods.GoodsEntity;
 import org.acowzon.backend.entity.address.AddressEntity;
+import org.acowzon.backend.entity.goods.GoodsEntity;
 import org.acowzon.backend.entity.user.UserEntity;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
@@ -46,7 +46,7 @@ public class ShopEntity {
             inverseForeignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
     private Set<UserEntity> admin; // 管理员
 
-    @OneToMany(mappedBy = "shop",cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToMany(mappedBy = "shop", cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, orphanRemoval = true)
     private Set<GoodsEntity> goodsSet; // 上架商品
 
     @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, orphanRemoval = true)
