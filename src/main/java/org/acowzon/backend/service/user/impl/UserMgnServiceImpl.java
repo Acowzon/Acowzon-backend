@@ -94,9 +94,7 @@ public class UserMgnServiceImpl implements UserMgnService {
 
     /**
      * 验证用户信息
-     *
-     *
-     * @param userName
+     * @param userName 用户名
      * @param password 登录密码
      * @return 登录状态
      * @throws BusinessException 业务相关异常
@@ -145,7 +143,7 @@ public class UserMgnServiceImpl implements UserMgnService {
             List<String> ignoredPropertyList =  new ArrayList(Arrays.asList(PublicBeanUtils.getNullPropertyNames(userFullInfoDTO)));
             ignoredPropertyList.add("isSeller");
             ignoredPropertyList.add("addressSet");
-            BeanUtils.copyProperties(userFullInfoDTO, userEntityOptional.get(),ignoredPropertyList.toArray(new String[ignoredPropertyList.size()+1]));
+            BeanUtils.copyProperties(userFullInfoDTO, userEntityOptional.get(),ignoredPropertyList.toArray(new String[0]));
             userEntityOptional.get().setUpdateTime(new Date());
             userDAO.save(userEntityOptional.get());
         } else {
