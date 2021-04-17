@@ -19,10 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
-import java.util.Date;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class GoodsMgnServiceImpl implements GoodsMgnService {
@@ -71,7 +68,7 @@ public class GoodsMgnServiceImpl implements GoodsMgnService {
         Assert.notNull(goods, "GoodsDTO can not be null");
         GoodsEntity goodsEntity = new GoodsEntity();
 
-        BeanUtils.copyProperties(goods, goodsEntity,"id");//忽略id字段，让后端自动生成
+        BeanUtils.copyProperties(goods, goodsEntity,"id","soldCount","goodsStarsCount","views","shopName");//忽略id字段，让后端自动生成
 
         Optional<GoodsTypeEntity> goodsTypeEntity = goodsTypeDAO.findById(goods.getType().getId());
 
@@ -101,7 +98,15 @@ public class GoodsMgnServiceImpl implements GoodsMgnService {
             /**
              * DTO内部不包含Entity类型，故直接copyProperties时会被忽略
              */
-            BeanUtils.copyProperties(goodsDetailDTO, goodsOptional.get(), PublicBeanUtils.getNullPropertyNames(goodsDetailDTO));
+            ArrayList<String> ignoredPropertyList = new ArrayList(Arrays.asList(PublicBeanUtils.getNullPropertyNames(goodsDetailDTO)));
+            ignoredPropertyList.add("inventory");
+            ignoredPropertyList.add("soldCount");
+            ignoredPropertyList.add("goodsStarsCount");
+            ignoredPropertyList.add("views");
+            ignoredPropertyList.add("shopId");
+            ignoredPropertyList.add("shopName");
+            ignoredPropertyList.add("price");
+            BeanUtils.copyProperties(goodsDetailDTO, goodsOptional.get(), ignoredPropertyList.toArray(new String[0]));
             goodsOptional.get().setUpdateTime(new Date());
             goodsDAO.save(goodsOptional.get());
         } else {
