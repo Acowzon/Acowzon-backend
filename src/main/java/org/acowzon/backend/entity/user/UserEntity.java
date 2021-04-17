@@ -63,7 +63,7 @@ public class UserEntity implements Serializable {
 
     private Date birthDay; // 用户生日
 
-    private boolean isSeller;   // 该用户是否是卖家
+    private boolean isSeller = false;   // 该用户是否是卖家
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinTable(name = "r_user_address",

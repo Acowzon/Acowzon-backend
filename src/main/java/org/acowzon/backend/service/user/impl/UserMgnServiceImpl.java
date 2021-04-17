@@ -125,7 +125,7 @@ public class UserMgnServiceImpl implements UserMgnService {
     @Override
     public UUID addUser(UserFullInfoDTO userFullInfoDTO, String password) throws BusinessException {
         UserEntity userEntity = new UserEntity();
-        BeanUtils.copyProperties(userFullInfoDTO, userEntity);
+        BeanUtils.copyProperties(userFullInfoDTO, userEntity, "isSeller","addressSet");
         userEntity.setPassword(passwordEncoder.encode(password));
         userEntity.setCreateTime(new Date());
         userEntity.setUpdateTime(new Date());
@@ -144,6 +144,7 @@ public class UserMgnServiceImpl implements UserMgnService {
         if (userEntityOptional.isPresent()) {
             List<String> ignoredPropertyList =  new ArrayList(Arrays.asList(PublicBeanUtils.getNullPropertyNames(userFullInfoDTO)));
             ignoredPropertyList.add("isSeller");
+            ignoredPropertyList.add("addressSet");
             BeanUtils.copyProperties(userFullInfoDTO, userEntityOptional.get(),ignoredPropertyList.toArray(new String[ignoredPropertyList.size()+1]));
             userEntityOptional.get().setUpdateTime(new Date());
             userDAO.save(userEntityOptional.get());

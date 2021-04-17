@@ -3,10 +3,7 @@ package org.acowzon.backend.ctrl.user;
 
 import org.acowzon.backend.ctrl.DefaultWebResponse;
 import org.acowzon.backend.ctrl.UUIDParamRequest;
-import org.acowzon.backend.ctrl.user.request.AddUserRequest;
-import org.acowzon.backend.ctrl.user.request.UpdateUserAddressRequest;
-import org.acowzon.backend.ctrl.user.request.UpdateUserPasswordRequest;
-import org.acowzon.backend.ctrl.user.request.VerifyUserInfoRequest;
+import org.acowzon.backend.ctrl.user.request.*;
 import org.acowzon.backend.dto.user.UserFullInfoDTO;
 import org.acowzon.backend.exception.BusinessException;
 import org.acowzon.backend.service.user.UserMgnService;
@@ -31,26 +28,26 @@ public class UserMgnCtrl {
     @Autowired
     UserMgnService userMgnService;
 
-    @PostMapping("/list/all")
+    @PostMapping("list/all")
     public DefaultWebResponse listAllUser() {
         return DefaultWebResponse.Builder.success(userMgnService.listAllUser());
     }
 
-    @PostMapping("/basicInfo")
+    @PostMapping("basicInfo")
     public DefaultWebResponse getBasicInfo(@RequestBody UUIDParamRequest request) throws BusinessException {
         Assert.notNull(request, "request can not be null");
         logger.info(request.toString());
         return DefaultWebResponse.Builder.success(userMgnService.getUserBasicInfo(request.getId()));
     }
 
-    @PostMapping("/detail")
+    @PostMapping("detail")
     public DefaultWebResponse getDetailInfo(@RequestBody UUIDParamRequest request) throws BusinessException {
         Assert.notNull(request, "request can not be null");
         logger.info(request.toString());
         return DefaultWebResponse.Builder.success(userMgnService.getUserFullInfo(request.getId()));
     }
 
-    @PostMapping(value = "/verify")
+    @PostMapping(value = "verify")
     public DefaultWebResponse verify(@RequestBody VerifyUserInfoRequest request) throws BusinessException {
         Assert.notNull(request, "request can not be null");
         logger.info(request.toString());
@@ -62,7 +59,7 @@ public class UserMgnCtrl {
         }
     }
 
-    @PostMapping(value = "/add")
+    @PostMapping(value = "add")
     public DefaultWebResponse addUser(@RequestBody AddUserRequest request) throws BusinessException {
         Assert.notNull(request, "request can not be null");
         logger.info(request.toString());
@@ -71,7 +68,7 @@ public class UserMgnCtrl {
         return DefaultWebResponse.Builder.success("add_user_success",userMgnService.addUser(userFullInfoDTO, request.getPassword()));
     }
 
-    @PostMapping(value = "/update")
+    @PostMapping(value = "update")
     public DefaultWebResponse updateUser(@RequestBody UserFullInfoDTO request) throws BusinessException {
         Assert.notNull(request, "request can not be null");
         logger.info(request.toString());
@@ -79,7 +76,7 @@ public class UserMgnCtrl {
         return DefaultWebResponse.Builder.success("update_user_info_success");
     }
 
-    @PostMapping(value = "/delete")
+    @PostMapping(value = "delete")
     public DefaultWebResponse deleteUser(@RequestBody UUIDParamRequest request) throws BusinessException {
         Assert.notNull(request, "request can not be null");
         logger.info(request.toString());
@@ -87,7 +84,7 @@ public class UserMgnCtrl {
         return DefaultWebResponse.Builder.success("delete_user_success");
     }
 
-    @PostMapping(value = "/updatePassword")
+    @PostMapping(value = "updatePassword")
     public DefaultWebResponse updatePassword(@RequestBody UpdateUserPasswordRequest request) throws BusinessException {
         Assert.notNull(request, "request can not be null");
         logger.info(request.toString());
@@ -95,7 +92,7 @@ public class UserMgnCtrl {
         return DefaultWebResponse.Builder.success("update_user_password_success");
     }
 
-    @PostMapping(value = "/addAddr")
+    @PostMapping(value = "addAddr")
     public DefaultWebResponse addAddress(@RequestBody UpdateUserAddressRequest request) throws BusinessException {
         Assert.notNull(request, "request can not be null");
         logger.info(request.toString());
@@ -103,11 +100,19 @@ public class UserMgnCtrl {
         return DefaultWebResponse.Builder.success("add_user_address_success");
     }
 
-    @PostMapping(value = "/deleteAddr")
+    @PostMapping(value = "deleteAddr")
     public DefaultWebResponse deleteAddress(@RequestBody UpdateUserAddressRequest request) throws BusinessException {
         Assert.notNull(request, "request can not be null");
         logger.info(request.toString());
         userMgnService.deleteUserAddress(request.getUserId(),request.getAddress().getId());
         return DefaultWebResponse.Builder.success("delete_user_address_success");
+    }
+
+    @PostMapping(value = "setSeller")
+    public DefaultWebResponse setSeller(@RequestBody UpdateSellerRequest request) throws BusinessException {
+        Assert.notNull(request, "request can not be null");
+        logger.info(request.toString());
+        userMgnService.setUserSeller(request.getId(),request.isSeller());
+        return DefaultWebResponse.Builder.success("update_seller_success");
     }
 }

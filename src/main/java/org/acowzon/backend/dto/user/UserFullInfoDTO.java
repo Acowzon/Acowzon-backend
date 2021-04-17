@@ -34,7 +34,7 @@ public class UserFullInfoDTO {
 
     private Date birthDay; // 用户生日
 
-    private boolean isSeller;   // 该用户是否是卖家
+    private boolean isSeller = false;   // 该用户是否是卖家
 
     private Set<AddressDTO> addressSet;   // 用户地址
 
