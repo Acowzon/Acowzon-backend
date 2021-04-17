@@ -1,7 +1,6 @@
 package org.acowzon.backend.entity.order;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.acowzon.backend.entity.goods.GoodsEntity;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
@@ -9,10 +8,12 @@ import org.hibernate.annotations.Type;
 import javax.persistence.*;
 import java.util.UUID;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @Entity
 @Table(name = "t_order_item")
+@EqualsAndHashCode(exclude = {"order"})
 public class OrderItemEntity {
 
     @Id

@@ -149,14 +149,6 @@ public class ShopMgnServiceImpl implements ShopMgnService {
         if (!shopEntityOptional.isPresent()) {
             throw new BusinessException("no_such_shop");
         }
-
-        //shop 和 goods 存在双向依赖，其中shop对goods存在级联操作，会出现无限循环，因此应该先删除绑定的goods，再删除goods
-        //并且这里不能用stream.map来操作，可能和多线程有关？
-        List<GoodsEntity> goodsEntityList = goodsDAO.findAllByShop(shopEntityOptional.get());
-        for (GoodsEntity goods : goodsEntityList) {
-            goodsDAO.delete(goods);
-        }
-
         shopDAO.deleteById(id);
     }
 

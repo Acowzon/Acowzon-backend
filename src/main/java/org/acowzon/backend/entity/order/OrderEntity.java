@@ -1,7 +1,6 @@
 package org.acowzon.backend.entity.order;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.acowzon.backend.entity.shop.ShopEntity;
 import org.acowzon.backend.entity.address.AddressEntity;
 import org.acowzon.backend.entity.user.UserEntity;
@@ -16,10 +15,12 @@ import java.util.Date;
 import java.util.Set;
 import java.util.UUID;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @Entity
 @Table(name = "t_order")
+@EqualsAndHashCode(exclude = {"customer","shop"})
 public class OrderEntity implements Serializable {
 
     @Id
@@ -35,15 +36,18 @@ public class OrderEntity implements Serializable {
     @JoinColumn(foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
     private UserEntity customer;  // 用户
 
-    @ManyToOne(fetch = FetchType.LAZY,optional = false)
+    /**
+     * 订单绑定的商家不是双向依赖，订单主要还是绑定在用户这边
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
     private ShopEntity shop;  // 商家
 
-    @ManyToOne(fetch = FetchType.LAZY,optional = false)
+    @ManyToOne(cascade = {CascadeType.PERSIST},fetch = FetchType.LAZY,optional = false)
     @JoinColumn(foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
     private AddressEntity destAddress; // 收货地址
 
-    @ManyToOne(fetch = FetchType.LAZY,optional = false)
+    @ManyToOne(cascade = {CascadeType.PERSIST},fetch = FetchType.LAZY,optional = false)
     @JoinColumn(foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
     private AddressEntity originAddress; // 发货地址
 

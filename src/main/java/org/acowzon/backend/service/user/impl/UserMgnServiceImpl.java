@@ -1,6 +1,7 @@
 package org.acowzon.backend.service.user.impl;
 
 import org.acowzon.backend.dao.address.AddressDAO;
+import org.acowzon.backend.dao.order.OrderDAO;
 import org.acowzon.backend.dao.shop.ShopDAO;
 import org.acowzon.backend.dao.user.UserDAO;
 import org.acowzon.backend.dto.address.AddressDTO;
@@ -9,6 +10,7 @@ import org.acowzon.backend.dto.user.UserFullInfoDTO;
 import org.acowzon.backend.entity.address.AddressEntity;
 import org.acowzon.backend.entity.user.UserEntity;
 import org.acowzon.backend.exception.BusinessException;
+import org.acowzon.backend.service.shop.ShopMgnService;
 import org.acowzon.backend.service.user.UserMgnService;
 import org.acowzon.backend.utils.PublicBeanUtils;
 import org.slf4j.Logger;
@@ -35,6 +37,12 @@ public class UserMgnServiceImpl implements UserMgnService {
 
     @Autowired
     private AddressDAO addressDAO;
+
+    @Autowired
+    private ShopMgnService shopMgnService;
+
+    @Autowired
+    private OrderDAO orderDAO;
 
     private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
@@ -94,6 +102,7 @@ public class UserMgnServiceImpl implements UserMgnService {
 
     /**
      * 验证用户信息
+     *
      * @param userName 用户名
      * @param password 登录密码
      * @return 登录状态
@@ -123,7 +132,7 @@ public class UserMgnServiceImpl implements UserMgnService {
     @Override
     public UUID addUser(UserFullInfoDTO userFullInfoDTO, String password) throws BusinessException {
         UserEntity userEntity = new UserEntity();
-        BeanUtils.copyProperties(userFullInfoDTO, userEntity, "isSeller","addressSet");
+        BeanUtils.copyProperties(userFullInfoDTO, userEntity, "isSeller", "addressSet");
         userEntity.setPassword(passwordEncoder.encode(password));
         userEntity.setCreateTime(new Date());
         userEntity.setUpdateTime(new Date());
@@ -140,10 +149,10 @@ public class UserMgnServiceImpl implements UserMgnService {
     public void updateUser(UserFullInfoDTO userFullInfoDTO) throws BusinessException {
         Optional<UserEntity> userEntityOptional = userDAO.findById(userFullInfoDTO.getId());
         if (userEntityOptional.isPresent()) {
-            List<String> ignoredPropertyList =  new ArrayList(Arrays.asList(PublicBeanUtils.getNullPropertyNames(userFullInfoDTO)));
+            List<String> ignoredPropertyList = new ArrayList(Arrays.asList(PublicBeanUtils.getNullPropertyNames(userFullInfoDTO)));
             ignoredPropertyList.add("isSeller");
             ignoredPropertyList.add("addressSet");
-            BeanUtils.copyProperties(userFullInfoDTO, userEntityOptional.get(),ignoredPropertyList.toArray(new String[0]));
+            BeanUtils.copyProperties(userFullInfoDTO, userEntityOptional.get(), ignoredPropertyList.toArray(new String[0]));
             userEntityOptional.get().setUpdateTime(new Date());
             userDAO.save(userEntityOptional.get());
         } else {
@@ -161,7 +170,7 @@ public class UserMgnServiceImpl implements UserMgnService {
     public void deleteUser(UUID id) throws BusinessException {
         Optional<UserEntity> userEntityOptional = userDAO.findById(id);
         if (userEntityOptional.isPresent()) {
-            shopDAO.findAllByOwner(userEntityOptional.get()).ifPresent((shopEntity -> shopDAO.deleteById(shopEntity.getId())));
+            shopDAO.deleteByOwner(userEntityOptional.get());
             userDAO.deleteById(id);
         } else {
             throw new BusinessException("no_such_user");

@@ -1,7 +1,6 @@
 package org.acowzon.backend.entity.goods;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.acowzon.backend.entity.shop.ShopEntity;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
@@ -14,11 +13,12 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.UUID;
 
-
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @Entity
 @Table(name = "t_goods")
+@EqualsAndHashCode(exclude = {"shop"})
 public class GoodsEntity implements Serializable {
 
     @Id

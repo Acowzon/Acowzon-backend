@@ -1,7 +1,6 @@
 package org.acowzon.backend.entity.address;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 
@@ -10,10 +9,12 @@ import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
 import java.util.UUID;
 
-@Data
 @NoArgsConstructor
+@Getter
+@Setter
 @Entity
 @Table(name = "t_Address")
+@EqualsAndHashCode
 public class AddressEntity implements Serializable {
 
     @Id

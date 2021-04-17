@@ -185,7 +185,7 @@ public class OrderServiceImpl implements OrderService {
         BeanUtils.copyProperties(orderDetailDTO.getOriginAddr(), newOriginAddr, "id");//忽略id字段，让后端自动生成
         orderEntity.setOriginAddress(newOriginAddr);
 
-        if (orderDetailDTO.getDestAddr().getId() != null) {
+        if (orderDetailDTO.getDestAddr().getId() != null ) {
             addressDAO.findById(orderDetailDTO.getDestAddr().getId()).ifPresent(orderEntity::setDestAddress);
         }
         AddressEntity newDestAddr = new AddressEntity();
@@ -210,6 +210,8 @@ public class OrderServiceImpl implements OrderService {
 
         orderEntity.setItems(itemSet);
         orderEntity.setOrderPrice(orderPrice);
+
+        orderEntity.setId(UUID.randomUUID());
 
         return orderDAO.save(orderEntity).getId();
     }
