@@ -20,7 +20,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @Entity
 @Table(name = "t_order")
-@EqualsAndHashCode(exclude = {"customer","shop"})
+@EqualsAndHashCode(exclude = {"customer","shop","items","destAddress","originAddress"})
 public class OrderEntity implements Serializable {
 
     @Id

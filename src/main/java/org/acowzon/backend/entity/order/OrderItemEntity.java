@@ -13,7 +13,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @Entity
 @Table(name = "t_order_item")
-@EqualsAndHashCode(exclude = {"order"})
+@EqualsAndHashCode(exclude = {"order","goods"})
 public class OrderItemEntity {
 
     @Id

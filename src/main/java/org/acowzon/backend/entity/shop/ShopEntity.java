@@ -1,7 +1,6 @@
 package org.acowzon.backend.entity.shop;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.acowzon.backend.entity.address.AddressEntity;
 import org.acowzon.backend.entity.goods.GoodsEntity;
 import org.acowzon.backend.entity.user.UserEntity;
@@ -15,10 +14,12 @@ import java.util.Date;
 import java.util.Set;
 import java.util.UUID;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @Entity
 @Table(name = "t_shop")
+@EqualsAndHashCode(exclude = {"owner","admin","goodsSet","address"})
 public class ShopEntity {
 
     @Id

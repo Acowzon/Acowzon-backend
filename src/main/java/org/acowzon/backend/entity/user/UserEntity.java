@@ -1,7 +1,6 @@
 package org.acowzon.backend.entity.user;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.acowzon.backend.entity.address.AddressEntity;
 import org.acowzon.backend.entity.order.OrderEntity;
 import org.acowzon.backend.enums.SexEnum;
@@ -17,10 +16,12 @@ import java.util.Set;
 import java.util.UUID;
 
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @Entity
 @Table(name = "t_user")
+@EqualsAndHashCode(exclude = {"orderSet","address"})
 public class UserEntity implements Serializable {
 
     @Id
