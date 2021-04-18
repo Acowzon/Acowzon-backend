@@ -21,10 +21,12 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
+import javax.transaction.Transactional;
 import java.util.*;
 
 
 @Service
+@Transactional
 public class UserMgnServiceImpl implements UserMgnService {
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());

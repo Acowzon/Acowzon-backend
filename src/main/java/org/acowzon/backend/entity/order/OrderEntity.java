@@ -43,11 +43,11 @@ public class OrderEntity implements Serializable {
     @JoinColumn(foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
     private ShopEntity shop;  // 商家
 
-    @ManyToOne(cascade = {CascadeType.PERSIST},fetch = FetchType.LAZY,optional = false)
+    @ManyToOne(cascade = {CascadeType.ALL},fetch = FetchType.LAZY,optional = false)
     @JoinColumn(foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
     private AddressEntity destAddress; // 收货地址
 
-    @ManyToOne(cascade = {CascadeType.PERSIST},fetch = FetchType.LAZY,optional = false)
+    @ManyToOne(cascade = {CascadeType.ALL},fetch = FetchType.LAZY,optional = false)
     @JoinColumn(foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
     private AddressEntity originAddress; // 发货地址
 

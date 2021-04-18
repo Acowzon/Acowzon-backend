@@ -33,6 +33,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class OrderServiceImpl implements OrderService {
 
     Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -95,6 +96,7 @@ public class OrderServiceImpl implements OrderService {
      * @return OrderDTO[]
      */
     @Override
+    @Transactional
     public OrderDTO[] listAllOrderByShopIdAndCustomerId(UUID shopId, UUID customerId) {
         return orderDAO.findAllByShopAndCustomer(new ShopEntity(shopId), new UserEntity(customerId)).stream().map(OrderDTO::parseDTO).toArray(OrderDTO[]::new);
     }
@@ -161,11 +163,11 @@ public class OrderServiceImpl implements OrderService {
         OrderEntity orderEntity = new OrderEntity();
 
         Optional<UserEntity> customerOptional = userDAO.findById(orderDetailDTO.getCustomerId());
-        if(!customerOptional.isPresent()) {
+        if (!customerOptional.isPresent()) {
             throw new BusinessException("no_such_customer");
         }
         Optional<ShopEntity> shopOptional = shopDAO.findById(orderDetailDTO.getShopId());
-        if(!shopOptional.isPresent()) {
+        if (!shopOptional.isPresent()) {
             throw new BusinessException("no_such_shop");
         }
 
@@ -178,27 +180,41 @@ public class OrderServiceImpl implements OrderService {
         orderEntity.setUpdateTime(new Date());
 
         //Todo 订单的地址需要和地址实体绑定么？还是仅仅保存一个说明性的字符串即可？
-        if (orderDetailDTO.getOriginAddr().getId() != null) {
-            addressDAO.findById(orderDetailDTO.getOriginAddr().getId()).ifPresent(orderEntity::setOriginAddress);
-        }
+
         AddressEntity newOriginAddr = new AddressEntity();
-        BeanUtils.copyProperties(orderDetailDTO.getOriginAddr(), newOriginAddr, "id");//忽略id字段，让后端自动生成
+        if (orderDetailDTO.getOriginAddr().getId() != null) {
+            Optional<AddressEntity> addressEntityOptional = addressDAO.findById(orderDetailDTO.getOriginAddr().getId());
+            if (addressEntityOptional.isPresent()) {
+                BeanUtils.copyProperties(addressEntityOptional.get(), newOriginAddr, "id");
+            } else {
+                BeanUtils.copyProperties(orderDetailDTO.getOriginAddr(), newOriginAddr, "id");//忽略id字段，让后端自动生成
+            }
+        } else {
+            BeanUtils.copyProperties(orderDetailDTO.getOriginAddr(), newOriginAddr, "id");//忽略id字段，让后端自动生成
+        }
         orderEntity.setOriginAddress(newOriginAddr);
 
-        if (orderDetailDTO.getDestAddr().getId() != null ) {
-            addressDAO.findById(orderDetailDTO.getDestAddr().getId()).ifPresent(orderEntity::setDestAddress);
-        }
         AddressEntity newDestAddr = new AddressEntity();
-        BeanUtils.copyProperties(orderDetailDTO.getDestAddr(), newDestAddr, "id");//忽略id字段，让后端自动生成
+        if (orderDetailDTO.getDestAddr().getId() != null) {
+            Optional<AddressEntity> addressEntityOptional = addressDAO.findById(orderDetailDTO.getDestAddr().getId());
+            if (addressEntityOptional.isPresent()) {
+                BeanUtils.copyProperties(addressEntityOptional.get(), newDestAddr, "id");
+            } else {
+                BeanUtils.copyProperties(orderDetailDTO.getDestAddr(), newDestAddr, "id");//忽略id字段，让后端自动生成
+            }
+        } else {
+            BeanUtils.copyProperties(orderDetailDTO.getDestAddr(), newDestAddr, "id");//忽略id字段，让后端自动生成
+        }
         orderEntity.setDestAddress(newDestAddr);
 
         //todo 这里把非法商品id的异常吞了
         Set<OrderItemEntity> itemSet = orderDetailDTO.getItems().stream().map(orderItemDTO -> {
             OrderItemEntity entity = new OrderItemEntity();
             if (orderItemDTO.getGoodsId() != null) {
-                goodsDAO.findByShopAndId(new ShopEntity(orderDetailDTO.getShopId()),orderItemDTO.getGoodsId()).ifPresent(
+                goodsDAO.findByShopAndId(new ShopEntity(orderDetailDTO.getShopId()), orderItemDTO.getGoodsId()).ifPresent(
                         goodsEntity -> {
                             entity.setGoods(goodsEntity);
+                            entity.setOrder(orderEntity);
                             BeanUtils.copyProperties(orderItemDTO, entity);
                         }
                 );
@@ -206,7 +222,7 @@ public class OrderServiceImpl implements OrderService {
             return entity;
         }).collect(Collectors.toSet());
 
-        Double orderPrice = itemSet.stream().mapToDouble(orderItemEntity -> orderItemEntity.getGoods().getPrice() * orderItemEntity.getAmount()).sum();
+        double orderPrice = itemSet.stream().mapToDouble(orderItemEntity -> orderItemEntity.getGoods().getPrice() * orderItemEntity.getAmount()).sum();
 
         orderEntity.setItems(itemSet);
         orderEntity.setOrderPrice(orderPrice);
@@ -223,12 +239,13 @@ public class OrderServiceImpl implements OrderService {
      * @throws BusinessException 业务相关异常
      */
     @Override
-    public void removeOrder(UUID id) throws BusinessException {
+    public void deleteOrder(UUID id) throws BusinessException {
         Optional<OrderEntity> orderEntityOptional = orderDAO.findById(id);
         if (orderEntityOptional.isPresent()) {
             orderDAO.deleteById(id);
+        } else {
+            throw new BusinessException("no_such_order");
         }
-        throw new BusinessException("no_such_order");
     }
 
     /**

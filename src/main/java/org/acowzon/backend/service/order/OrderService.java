@@ -79,7 +79,7 @@ public interface OrderService {
      * @param id 订单id
      * @throws BusinessException 业务相关异常
      */
-    void removeOrder(UUID id) throws BusinessException;
+    void deleteOrder(UUID id) throws BusinessException;
 
     /**
      * 更新订单状态

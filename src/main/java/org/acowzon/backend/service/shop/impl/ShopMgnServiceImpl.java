@@ -25,6 +25,7 @@ import javax.transaction.Transactional;
 import java.util.*;
 
 @Service
+@Transactional
 public class ShopMgnServiceImpl implements ShopMgnService {
 
     Logger logger = LoggerFactory.getLogger(this.getClass());
