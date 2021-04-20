@@ -11,6 +11,22 @@ public class DefaultWebResponse {
     private String msg;
 
     public static class Builder {
+        public static DefaultWebResponse success(String msg) {
+            DefaultWebResponse response = new DefaultWebResponse();
+            response.setData(null);
+            response.setMsg(msg);
+            response.setStatus("success");
+            return response;
+        }
+
+        public static DefaultWebResponse success(String msg,Object data) {
+            DefaultWebResponse response = new DefaultWebResponse();
+            response.setData(data);
+            response.setMsg(msg);
+            response.setStatus("success");
+            return response;
+        }
+
         public static DefaultWebResponse success(Object data) {
             DefaultWebResponse response = new DefaultWebResponse();
             response.setData(data);
