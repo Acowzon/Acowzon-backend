@@ -7,6 +7,7 @@ import org.acowzon.backend.ctrl.user.request.*;
 import org.acowzon.backend.dto.user.UserFullInfoDTO;
 import org.acowzon.backend.exception.BusinessException;
 import org.acowzon.backend.service.user.UserMgnService;
+import org.acowzon.backend.utils.JWTUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -14,6 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -48,11 +51,14 @@ public class UserMgnCtrl {
     }
 
     @PostMapping(value = "verify")
-    public DefaultWebResponse verify(@RequestBody VerifyUserInfoRequest request) throws BusinessException {
+    public DefaultWebResponse verify(@RequestBody VerifyUserInfoRequest request,
+                                     HttpServletResponse response) throws BusinessException {
         Assert.notNull(request, "request can not be null");
         logger.info(request.toString());
         Optional<UUID> userIdOptional = userMgnService.verifyUser(request.getUserName(), request.getPassword());
         if (userIdOptional.isPresent()) {
+            // 根据用户的id和username生成一个token,把这个token放入cookie中传回去
+            response.addCookie(new Cookie("token", JWTUtil.createToken(userIdOptional.get().toString(), request.getUserName())));
             return DefaultWebResponse.Builder.success("accept_user",userIdOptional.get());
         } else {
             return DefaultWebResponse.Builder.fail("reject_user");
