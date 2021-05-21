@@ -1,12 +1,11 @@
 package org.acowzon.backend.service.goods;
 
+import org.acowzon.backend.api.request.PageQueryRequest;
 import org.acowzon.backend.dto.goods.GoodsCatalogDTO;
 import org.acowzon.backend.dto.goods.GoodsDetailDTO;
 import org.acowzon.backend.dto.goods.GoodsTypeDTO;
-import org.acowzon.backend.entity.goods.GoodsTypeEntity;
 import org.acowzon.backend.exception.BusinessException;
 
-import java.util.Map;
 import java.util.UUID;
 
 public interface GoodsMgnService {
@@ -17,7 +16,7 @@ public interface GoodsMgnService {
 
     GoodsCatalogDTO[] getGoodsByShopId(UUID shopId) throws BusinessException;
 
-    GoodsCatalogDTO[] queryGoods(Map map);
+    GoodsCatalogDTO[] queryGoods(PageQueryRequest request) throws BusinessException;
 
     UUID addGoods(GoodsDetailDTO goodsDetailDTO) throws BusinessException;
 
@@ -25,13 +24,13 @@ public interface GoodsMgnService {
 
     void deleteGoods(UUID id) throws BusinessException;
 
-    void updateInventory(UUID goodsId,int inventory) throws BusinessException;
+    void updateInventory(UUID goodsId, int inventory) throws BusinessException;
 
-    void updateSoldCount(UUID goodsId,int soldCount) throws BusinessException;
+    void updateSoldCount(UUID goodsId, int soldCount) throws BusinessException;
 
-    void updateInventory(UUID goodsId,int inventory,boolean isAbsolute) throws BusinessException;
+    void updateInventory(UUID goodsId, int inventory, boolean isAbsolute) throws BusinessException;
 
-    void updateSoldCount(UUID goodsId,int soldCount,boolean isAbsolute) throws BusinessException;
+    void updateSoldCount(UUID goodsId, int soldCount, boolean isAbsolute) throws BusinessException;
 
     UUID addGoodsType(String goodsType);
 

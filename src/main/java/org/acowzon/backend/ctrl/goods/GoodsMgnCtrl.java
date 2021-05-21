@@ -1,8 +1,10 @@
 package org.acowzon.backend.ctrl.goods;
 
+import org.acowzon.backend.api.request.PageQueryRequest;
 import org.acowzon.backend.ctrl.DefaultWebResponse;
 import org.acowzon.backend.ctrl.UUIDParamRequest;
-import org.acowzon.backend.ctrl.goods.request.*;
+import org.acowzon.backend.ctrl.goods.request.UpdateInventoryRequest;
+import org.acowzon.backend.ctrl.goods.request.UpdateSoldCountRequest;
 import org.acowzon.backend.dto.goods.GoodsDetailDTO;
 import org.acowzon.backend.dto.goods.GoodsTypeDTO;
 import org.acowzon.backend.exception.BusinessException;
@@ -12,8 +14,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Map;
 
 
 @RestController
@@ -119,10 +119,10 @@ public class GoodsMgnCtrl {
     }
 
     @PostMapping("query")
-    public DefaultWebResponse queryGoods(@RequestBody Map<String, Object> map) {
-        Assert.notNull(map, "request can not be null");
+    public DefaultWebResponse queryGoods(@RequestBody PageQueryRequest request) throws BusinessException {
+        Assert.notNull(request, "request can not be null");
         //todo:分页查询，多条件查询
-        return DefaultWebResponse.Builder.success(goodsMgnService.queryGoods(map));
+        return DefaultWebResponse.Builder.success(goodsMgnService.queryGoods(request));
     }
 
     @PostMapping("add")

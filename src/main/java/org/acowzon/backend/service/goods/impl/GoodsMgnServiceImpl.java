@@ -1,5 +1,7 @@
 package org.acowzon.backend.service.goods.impl;
 
+import org.acowzon.backend.api.SpecificationParser;
+import org.acowzon.backend.api.request.PageQueryRequest;
 import org.acowzon.backend.dao.goods.GoodsDAO;
 import org.acowzon.backend.dao.goods.GoodsTypeDAO;
 import org.acowzon.backend.dao.shop.ShopDAO;
@@ -16,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
@@ -60,9 +63,20 @@ public class GoodsMgnServiceImpl implements GoodsMgnService {
     }
 
     @Override
-    public GoodsCatalogDTO[] queryGoods(Map map) {
+    public GoodsCatalogDTO[] queryGoods(PageQueryRequest request) throws BusinessException {
         //todo:分页查询，多条件查询
-        return null;
+        Specification<GoodsEntity> specification = SpecificationParser.parseSpecification(request, GoodsCatalogDTO.class);
+//        Specification<GoodsEntity> specification = new Specification<GoodsEntity>() {
+//            List<Predicate> predicateList = new ArrayList<>();
+//            @Override
+//            public Predicate toPredicate(Root<GoodsEntity> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
+//                predicateList.add(criteriaBuilder.greaterThanOrEqualTo(root.get("price"),"1.2"));
+//                predicateList.add(criteriaBuilder.like(root.get("name"),"%通往天堂的钥匙%"));
+//                Predicate[] result = predicateList.toArray(new Predicate[predicateList.size()]);
+//                return criteriaBuilder.and(result);
+//            }
+//        };
+        return goodsDAO.findAll(specification).stream().map(GoodsCatalogDTO::parseDTO).toArray(GoodsCatalogDTO[]::new);
     }
 
     @Override
@@ -70,7 +84,7 @@ public class GoodsMgnServiceImpl implements GoodsMgnService {
         Assert.notNull(goods, "GoodsDTO can not be null");
         GoodsEntity goodsEntity = new GoodsEntity();
 
-        BeanUtils.copyProperties(goods, goodsEntity,"id","soldCount","goodsStarsCount","views","shopName");//忽略id字段，让后端自动生成
+        BeanUtils.copyProperties(goods, goodsEntity, "id", "soldCount", "goodsStarsCount", "views", "shopName");//忽略id字段，让后端自动生成
 
         Optional<GoodsTypeEntity> goodsTypeEntity = goodsTypeDAO.findById(goods.getType().getId());
 
@@ -192,7 +206,7 @@ public class GoodsMgnServiceImpl implements GoodsMgnService {
             throw new BusinessException("no_such_goods_type");
         }
         GoodsTypeEntity goodsTypeEntity = new GoodsTypeEntity();
-        BeanUtils.copyProperties(goodsType,goodsTypeEntity);
+        BeanUtils.copyProperties(goodsType, goodsTypeEntity);
         goodsTypeDAO.save(goodsTypeEntity);
     }
 
