@@ -6,6 +6,8 @@ import org.acowzon.backend.dao.shop.ShopDAO;
 import org.acowzon.backend.dto.goods.GoodsCatalogDTO;
 import org.acowzon.backend.dto.goods.GoodsDetailDTO;
 import org.acowzon.backend.dto.goods.GoodsTypeDTO;
+import org.acowzon.backend.elaticsearch.Goods;
+import org.acowzon.backend.elaticsearch.dao.GoodsRepository;
 import org.acowzon.backend.entity.goods.GoodsEntity;
 import org.acowzon.backend.entity.goods.GoodsTypeEntity;
 import org.acowzon.backend.entity.shop.ShopEntity;
@@ -36,6 +38,9 @@ public class GoodsMgnServiceImpl implements GoodsMgnService {
 
     @Autowired
     ShopDAO shopDAO;
+
+    @Autowired
+    GoodsRepository goodsRepository;
 
     @Override
     public GoodsDetailDTO getGoodsById(UUID goodsId) throws BusinessException {
@@ -89,6 +94,8 @@ public class GoodsMgnServiceImpl implements GoodsMgnService {
 
         goodsEntity.setCreateTime(new Date());
         goodsEntity.setUpdateTime(new Date());
+        // 添加mysql的同时也修改es中的内容
+        goodsRepository.save(Goods.parse(goodsEntity));
         return goodsDAO.save(goodsEntity).getId();
     }
 
@@ -110,6 +117,8 @@ public class GoodsMgnServiceImpl implements GoodsMgnService {
             ignoredPropertyList.add("price");
             BeanUtils.copyProperties(goodsDetailDTO, goodsOptional.get(), ignoredPropertyList.toArray(new String[0]));
             goodsOptional.get().setUpdateTime(new Date());
+            // 修改的时候也把结果更新到es中
+            goodsRepository.save(Goods.parse(goodsOptional.get()));
             goodsDAO.save(goodsOptional.get());
         } else {
             throw new BusinessException("no_such_goods");
@@ -122,6 +131,8 @@ public class GoodsMgnServiceImpl implements GoodsMgnService {
         Optional<GoodsEntity> goods = goodsDAO.findById(goodsId);
         if (goods.isPresent()) {
             goodsDAO.deleteById(goodsId);
+            // 删除的时候在es中也要删除
+            goodsRepository.delete(new Goods().setId(goodsId));
         } else {
             throw new BusinessException("no_such_goods");
         }
@@ -145,6 +156,8 @@ public class GoodsMgnServiceImpl implements GoodsMgnService {
             }
         }
         goodsDAO.save(goods);
+        // 修改的时候也把结果更新到es中
+        goodsRepository.save(Goods.parse(goods));
     }
 
     @Override
@@ -170,6 +183,8 @@ public class GoodsMgnServiceImpl implements GoodsMgnService {
             }
         }
         goodsDAO.save(goods);
+        // 修改的时候也把结果更新到es中
+        goodsRepository.save(Goods.parse(goods));
     }
 
     @Override
